@@ -346,7 +346,7 @@ public class MenuIniziale extends JFrame {
         }
         
         dispose();
-        SwingUtilities.invokeLater(() -> new TresetteGame(nomeGiocatore).setVisible(true));
+        SwingUtilities.invokeLater(() -> new TresetteGame(nomeGiocatore, punteggioVittoria).setVisible(true));
     }
     
     private void mostraStatistiche() {

@@ -382,13 +382,16 @@ public class TresetteGame extends JFrame {
         audioObserver = new AudioObserver(true); // Audio abilitato di default
         loggingObserver = new LoggingObserver(this::log); // Usa il metodo log esistente
         
-        // Inizializza il debug observer (DISABILITATO di default)
+        // Disabilita il logging dettagliato per ridurre i messaggi nel log
+        loggingObserver.setLoggingDettagliato(false);
+        
+        // Inizializza il debug observer (COMPLETAMENTE DISABILITATO)
         debugObserver = new DebugObserver(false); // Debug DISABILITATO
         
-        // Registra gli observer
+        // Registra gli observer (debug observer NON registrato)
         gameObservable.addObserver(audioObserver);
         gameObservable.addObserver(loggingObserver);
-        gameObservable.addObserver(debugObserver);
+        // gameObservable.addObserver(debugObserver); // DEBUG COMPLETAMENTE DISABILITATO
 
         inizializzaGUI();
         nuovaPartita();
