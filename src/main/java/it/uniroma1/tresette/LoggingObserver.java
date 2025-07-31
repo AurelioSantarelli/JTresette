@@ -27,8 +27,9 @@ public class LoggingObserver implements GameStateObserver {
     
     @Override
     public void onGameStateChanged(GameState newState) {
-        if (!loggingDettagliato && isStatoIntermedio(newState)) {
-            return; // Salta stati intermedi se logging non dettagliato
+        // Se il logging dettagliato è disabilitato, non stampare MAI i messaggi di stato
+        if (!loggingDettagliato) {
+            return;
         }
         
         String messaggio = formatMessage("STATO", "Cambio stato: " + newState.toString());
@@ -80,16 +81,5 @@ public class LoggingObserver implements GameStateObserver {
      */
     private String formatMessage(String tipo, String messaggio) {
         return String.format("[%s] %s", tipo, messaggio);
-    }
-    
-    /**
-     * Verifica se uno stato è considerato intermedio (per il logging non dettagliato)
-     * @param stato lo stato da verificare
-     * @return true se è uno stato intermedio
-     */
-    private boolean isStatoIntermedio(GameState stato) {
-        return stato == GameState.TURNO_AI || 
-               stato == GameState.TURNO_UMANO || 
-               stato == GameState.VALUTAZIONE_MANO;
     }
 }
