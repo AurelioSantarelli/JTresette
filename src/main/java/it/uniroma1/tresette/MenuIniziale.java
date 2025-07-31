@@ -1,5 +1,7 @@
 package it.uniroma1.tresette;
 
+import it.uniroma1.tresette.model.StatisticheGiocatore;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
