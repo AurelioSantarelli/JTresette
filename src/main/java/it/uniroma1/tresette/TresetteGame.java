@@ -2,9 +2,11 @@ package it.uniroma1.tresette;
 
 import it.uniroma1.tresette.model.Carta;
 import it.uniroma1.tresette.model.Seme;
+import it.uniroma1.tresette.model.Giocatore;
 import it.uniroma1.tresette.model.StatisticheGiocatore;
 import it.uniroma1.tresette.model.observer.*;
 import it.uniroma1.tresette.view.utils.PaletteColori;
+import it.uniroma1.tresette.controller.GameController;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -25,7 +27,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
-public class TresetteGame extends JFrame {
+public class TresetteGame extends JFrame implements GameController.GameView {
 
     // Classe Giocatore
     static class Giocatore {
@@ -127,6 +129,9 @@ public class TresetteGame extends JFrame {
     private final AudioObserver audioObserver;
     private final LoggingObserver loggingObserver;
     private final DebugObserver debugObserver;
+    
+    // Controller per la logica del gioco
+    private final GameController gameController;
 
     public TresetteGame(String nomeGiocatore) {
         this(nomeGiocatore, 41); // Default a 41 punti per retrocompatibilità
@@ -164,8 +169,11 @@ public class TresetteGame extends JFrame {
         gameObservable.addObserver(loggingObserver);
         // gameObservable.addObserver(debugObserver); // DEBUG COMPLETAMENTE DISABILITATO
 
+        // Inizializza il controller
+        gameController = new GameController(nomeGiocatore, punteggioVittoria, gameObservable, this);
+
         inizializzaGUI();
-        nuovaPartita();
+        gameController.nuovaPartita(); // Usa il controller invece di nuovaPartita()
     }
 
     private void inizializzaGUI() {
@@ -253,7 +261,7 @@ public class TresetteGame extends JFrame {
         
         btnPausaRiprendi.addActionListener(e -> {
             SoundManager.riproduciSuonoClick();
-            togglePausa();
+            gameController.togglePausa();
         });
         
         panelPausa.add(btnPausaRiprendi);
@@ -324,7 +332,7 @@ public class TresetteGame extends JFrame {
             bottoniCarte[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
             
             final int indice = i;
-            bottoniCarte[i].addActionListener(e -> giocaCarta(indice));
+            bottoniCarte[i].addActionListener(e -> gameController.giocaCarta(indice));
             
             // Aggiungi effetto hover per schiarire la carta
             bottoniCarte[i].addMouseListener(new java.awt.event.MouseAdapter() {
@@ -430,10 +438,10 @@ public class TresetteGame extends JFrame {
                         creaIconaConferma() // Aggiungi qui la tua icona personalizzata
                 );
                 if (risposta == JOptionPane.YES_OPTION) {
-                    nuovaPartita();
+                    gameController.nuovaPartita();
                 }
             } else {
-                nuovaPartita();
+                gameController.nuovaPartita();
             }
         });
         
@@ -1022,7 +1030,7 @@ public class TresetteGame extends JFrame {
         return new ImageIcon(img);
     }
 
-    private void log(String messaggio) {
+    public void log(String messaggio) {
         areaLog.append(messaggio + "\n");
         areaLog.setCaretPosition(areaLog.getDocument().getLength());
     }
@@ -1191,6 +1199,90 @@ public class TresetteGame extends JFrame {
      */
     public void resetDebugStats() {
         debugObserver.resetStats();
+    }
+
+    // =================== IMPLEMENTAZIONE INTERFACE GAMEVIEW ===================
+    
+    @Override
+    public void aggiornaInterfaccia() {
+        SwingUtilities.invokeLater(() -> {
+            aggiornaManiGiocatori();
+            aggiornaCarteGiocate();
+            repaint();
+        });
+    }
+    
+    @Override
+    public void aggiornaPunteggi(double punteggioCoppia1, double punteggioCoppia2) {
+        SwingUtilities.invokeLater(() -> {
+            this.punteggioCoppia1Totale = punteggioCoppia1;
+            this.punteggioCoppia2Totale = punteggioCoppia2;
+            repaint();
+        });
+    }
+    
+    @Override
+    public void mostraVittoria(String messaggioVittoria) {
+        SwingUtilities.invokeLater(() -> {
+            if (messaggioVittoria.contains(giocatori[0].getNome())) {
+                // Il giocatore umano ha vinto
+                JOptionPane.showMessageDialog(this, messaggioVittoria, "Vittoria!", JOptionPane.INFORMATION_MESSAGE,
+                        new ImageIcon(getClass().getResource("/images/vittoria.png")));
+            } else {
+                // Il giocatore umano ha perso
+                JOptionPane.showMessageDialog(this, messaggioVittoria, "Sconfitta!", JOptionPane.INFORMATION_MESSAGE,
+                        new ImageIcon(getClass().getResource("/images/sconfitta.png")));
+            }
+        });
+    }
+    
+    @Override
+    public void abilitaBottoniCarte(boolean abilita) {
+        SwingUtilities.invokeLater(() -> {
+            for (JButton bottone : bottoniCarte) {
+                if (bottone != null) {
+                    bottone.setEnabled(abilita);
+                }
+            }
+        });
+    }
+    
+    @Override
+    public void aggiornaCarteGiocate() {
+        SwingUtilities.invokeLater(() -> {
+            List<Carta> carteGiocate = gameController.getCarteGiocate();
+            for (int i = 0; i < 4; i++) {
+                if (i < carteGiocate.size()) {
+                    labelCarteGiocate[i].setIcon(carteGiocate.get(i).getImmagine());
+                    labelCarteGiocate[i].setText("");
+                } else {
+                    labelCarteGiocate[i].setIcon(null);
+                    labelCarteGiocate[i].setText("Carta " + (i + 1));
+                }
+            }
+        });
+    }
+    
+    @Override
+    public void aggiornaManiGiocatori() {
+        SwingUtilities.invokeLater(() -> {
+            it.uniroma1.tresette.model.Giocatore[] giocatori = gameController.getGiocatori();
+            
+            // Aggiorna le carte del giocatore umano
+            List<Carta> manoGiocatore = giocatori[0].getMano();
+            for (int i = 0; i < 10; i++) {
+                if (i < manoGiocatore.size()) {
+                    bottoniCarte[i].setIcon(manoGiocatore.get(i).getImmagine());
+                    bottoniCarte[i].setText("");
+                    bottoniCarte[i].setVisible(true);
+                } else {
+                    bottoniCarte[i].setVisible(false);
+                }
+            }
+            
+            // Aggiorna il numero di carte degli altri giocatori
+            // (questo sarà gestito nel repaint con le informazioni dal controller)
+        });
     }
 
     public static void main(String[] args) {
