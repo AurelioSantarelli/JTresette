@@ -1,6 +1,7 @@
 package it.uniroma1.tresette;
 
 import it.uniroma1.tresette.model.StatisticheGiocatore;
+import it.uniroma1.tresette.view.sound.SoundManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -107,7 +108,7 @@ public class MenuIniziale extends JFrame {
         });
         
         btnStats.addActionListener(e -> {
-            TresetteGame.SoundManager.riproduciSuonoClick();
+            SoundManager.riproduciSuonoClick();
             mostraStatistiche();
         });
         
@@ -246,9 +247,9 @@ public class MenuIniziale extends JFrame {
 
         btnInizia.addActionListener(e -> {
             // Riproduci il suono del click
-            TresetteGame.SoundManager.riproduciSuonoClick();
+            SoundManager.riproduciSuonoClick();
             // Oppure usa il click sintetico se non hai file audio:
-            // TresetteGame.SoundManager.riproduciClickSintetico();
+            // SoundManager.riproduciClickSintetico();
             
             avviaGioco();
         });
@@ -299,7 +300,7 @@ public class MenuIniziale extends JFrame {
 
         btnIstruzioni.addActionListener(e -> {
             // Riproduci il suono del click
-            TresetteGame.SoundManager.riproduciSuonoClick();
+            SoundManager.riproduciSuonoClick();
             mostraIstruzioni();
         });
 

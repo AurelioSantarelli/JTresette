@@ -1,7 +1,7 @@
 package it.uniroma1.tresette.model.observer;
 
+import it.uniroma1.tresette.view.sound.SoundManager;
 import it.uniroma1.tresette.model.Carta;
-import it.uniroma1.tresette.TresetteGame;
 
 /**
  * Observer per il sistema audio del gioco
@@ -34,7 +34,7 @@ public class AudioObserver implements GameStateObserver {
         switch (newState) {
             case DISTRIBUZIONE_CARTE:
                 // Riproduci suono delle carte mischiate
-                TresetteGame.SoundManager.riproduciSuonoCarteMischiate();
+                SoundManager.riproduciSuonoCarteMischiate();
                 break;
             case TERMINATO:
                 // Il suono di vittoria/sconfitta viene gestito altrove
@@ -56,7 +56,7 @@ public class AudioObserver implements GameStateObserver {
         if (!audioAbilitato) return;
         
         // Riproduci suono della carta giocata
-        TresetteGame.SoundManager.riproduciSuonoCarta();
+        SoundManager.riproduciSuonoCarta();
     }
     
     @Override
@@ -76,7 +76,7 @@ public class AudioObserver implements GameStateObserver {
         if (!audioAbilitato) return;
         
         // Riproduci suono di fine mano
-        TresetteGame.SoundManager.riproduciSuonoFineMano();
+        SoundManager.riproduciSuonoFineMano();
     }
     
     @Override
@@ -84,7 +84,8 @@ public class AudioObserver implements GameStateObserver {
         if (!audioAbilitato) return;
         
         // Riproduci suono di click per pausa
-        TresetteGame.SoundManager.riproduciSuonoClick();
+        // Riproduci suono del click
+        SoundManager.riproduciSuonoClick();
     }
     
     @Override
@@ -92,6 +93,6 @@ public class AudioObserver implements GameStateObserver {
         if (!audioAbilitato) return;
         
         // Riproduci suono di fine mano completa
-        TresetteGame.SoundManager.riproduciSuonoContinuaPartita();
+        SoundManager.riproduciSuonoContinuaPartita();
     }
 }
