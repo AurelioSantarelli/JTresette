@@ -1,7 +1,8 @@
-package it.uniroma1.tresette;
+package it.uniroma1.tresette.view.windows;
 
 import it.uniroma1.tresette.model.StatisticheGiocatore;
 import it.uniroma1.tresette.view.sound.SoundManager;
+import it.uniroma1.tresette.view.utils.PaletteColori;
 
 import javax.swing.*;
 import java.awt.*;

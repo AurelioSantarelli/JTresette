@@ -3,6 +3,7 @@ package it.uniroma1.tresette.controller;
 import it.uniroma1.tresette.model.Carta;
 import it.uniroma1.tresette.model.Seme;
 import it.uniroma1.tresette.model.Giocatore;
+import it.uniroma1.tresette.model.StatisticheGiocatore;
 import it.uniroma1.tresette.model.observer.*;
 
 import java.util.*;
@@ -35,6 +36,7 @@ public class GameController {
     private final GameStateObservable gameObservable;
     private final GameView view;
     private final double PUNTEGGIO_VITTORIA;
+    private final StatisticheGiocatore statisticheGiocatore;
     
     private boolean giocoInCorso;
     private boolean giocoInPausa;
@@ -59,6 +61,7 @@ public class GameController {
         this.PUNTEGGIO_VITTORIA = punteggioVittoria;
         this.gameObservable = gameObservable;
         this.view = view;
+        this.statisticheGiocatore = new StatisticheGiocatore(nomeGiocatore);
         
         // Inizializza i giocatori
         giocatori = new Giocatore[4];
@@ -540,6 +543,19 @@ public class GameController {
             view.log("=== PARTITA TERMINATA ===");
             view.log(messaggioVittoria);
             view.log(String.format("Punteggio finale: %.2f - %.2f", punteggioCoppia1Totale, punteggioCoppia2Totale));
+            
+            // Salva le statistiche del giocatore
+            String nomeGiocatoreUmano = giocatori[0].getNome();
+            if (punteggioCoppia1Totale >= PUNTEGGIO_VITTORIA) {
+                // La coppia del giocatore umano ha vinto (giocatori[0] e giocatori[2])
+                statisticheGiocatore.aggiungiVittoria();
+                view.log("Statistiche aggiornate: VITTORIA per " + nomeGiocatoreUmano);
+            } else {
+                // La coppia avversaria ha vinto
+                statisticheGiocatore.aggiungiSconfitta();
+                view.log("Statistiche aggiornate: SCONFITTA per " + nomeGiocatoreUmano);
+            }
+            
             view.mostraVittoria(messaggioVittoria);
             view.abilitaBottoniCarte(false);
         } else {

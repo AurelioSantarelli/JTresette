@@ -86,10 +86,13 @@ public class SoundManager {
     }
 
     /**
-     * Riproduce il suono delle carte mischiate
+     * Riproduce il suono delle carte mischiate con un delay di 2 secondi
      */
     public static void riproduciSuonoCarteMischiate() {
-        riproduciSuono(clipCarteMischiate);
+        // Usa un Timer per aggiungere un delay di 2 secondi
+        Timer timer = new Timer(2000, e -> riproduciSuono(clipCarteMischiate));
+        timer.setRepeats(false); // Esegue solo una volta
+        timer.start();
     }
 
     /**
