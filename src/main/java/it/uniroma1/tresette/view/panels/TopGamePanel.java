@@ -59,14 +59,23 @@ public class TopGamePanel extends JPanel {
     }
     
     /**
-     * Aggiorna i punteggi delle coppie
+     * Aggiorna i punteggi delle coppie o dei giocatori individuali
      */
     public void aggiornaPunteggi(double punteggioCoppia1, double punteggioCoppia2) {
         SwingUtilities.invokeLater(() -> {
             it.uniroma1.tresette.model.Giocatore[] giocatori = gameController.getGiocatori();
-            labelPunteggi.setText(String.format("Punteggi Totali: " + giocatori[0].getNome() + " - " + giocatori[2].getNome() +
-                    " : %.1f | " + giocatori[1].getNome() + " - " + giocatori[3].getNome() + " : %.1f",
-                    punteggioCoppia1, punteggioCoppia2));
+            
+            if (gameController.getNumeroGiocatori() == 2) {
+                // Modalità 1v1: mostra punteggi individuali
+                labelPunteggi.setText(String.format("Punteggi: %s: %.1f | %s: %.1f",
+                        giocatori[0].getNome(), punteggioCoppia1,
+                        giocatori[1].getNome(), punteggioCoppia2));
+            } else {
+                // Modalità 4 giocatori: mostra punteggi per coppie
+                labelPunteggi.setText(String.format("Punteggi Totali: " + giocatori[0].getNome() + " - " + giocatori[2].getNome() +
+                        " : %.1f | " + giocatori[1].getNome() + " - " + giocatori[3].getNome() + " : %.1f",
+                        punteggioCoppia1, punteggioCoppia2));
+            }
             repaint();
         });
     }

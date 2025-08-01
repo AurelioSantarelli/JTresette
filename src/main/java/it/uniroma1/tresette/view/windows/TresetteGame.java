@@ -49,6 +49,16 @@ public class TresetteGame extends JFrame implements GameController.GameView {
      * @param punteggioVittoria punteggio necessario per vincere
      */
     public TresetteGame(String nomeGiocatore, int punteggioVittoria) {
+        this(nomeGiocatore, punteggioVittoria, false); // Default a 4 giocatori
+    }
+
+    /**
+     * Costruttore completo del gioco con modalità
+     * @param nomeGiocatore nome del giocatore umano
+     * @param punteggioVittoria punteggio necessario per vincere
+     * @param modalitaDueGiocatori true per modalità 1v1, false per modalità 4 giocatori
+     */
+    public TresetteGame(String nomeGiocatore, int punteggioVittoria, boolean modalitaDueGiocatori) {
         super("JTresette!");
         
         this.PUNTEGGIO_VITTORIA = punteggioVittoria;
@@ -68,7 +78,7 @@ public class TresetteGame extends JFrame implements GameController.GameView {
         gameObservable.addObserver(loggingObserver);
 
         // Inizializza il controller
-        gameController = new GameController(nomeGiocatore, punteggioVittoria, gameObservable, this);
+        gameController = new GameController(nomeGiocatore, punteggioVittoria, modalitaDueGiocatori, gameObservable, this);
 
         // Inizializza layout manager
         layoutManager = new GameLayoutManager(this);

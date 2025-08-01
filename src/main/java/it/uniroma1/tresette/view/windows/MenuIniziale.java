@@ -15,6 +15,7 @@ public class MenuIniziale extends JFrame {
     private BufferedImage sfondoImmagine;
     private JTextField campoNome;
     private JComboBox<String> comboPunteggio;
+    private JComboBox<String> comboModalita;
     private final int dimMenuIniziale = 800;
     private String ultimoNomeUsato = ""; // Ricorda l'ultimo nome utilizzato
     
@@ -138,55 +139,53 @@ public class MenuIniziale extends JFrame {
         sottotitolo.setAlignmentX(Component.CENTER_ALIGNMENT);
         pannelloInferiore.add(sottotitolo); */
         
-        pannelloInferiore.add(Box.createVerticalStrut(20)); // Spazio
-        
+        pannelloInferiore.add(Box.createVerticalStrut(15)); // Spazio
+
         // Pannello per nome (orizzontale)
         JPanel pannelloNome = new JPanel(new FlowLayout(FlowLayout.CENTER));
         pannelloNome.setOpaque(false);
         
         // Etichetta per il nome
         JLabel labelNome = new JLabel("Inserisci il tuo nome:", SwingConstants.CENTER);
-        labelNome.setFont(new Font("Arial", Font.BOLD, 18));
+        labelNome.setFont(new Font("Arial", Font.BOLD, 14));
         labelNome.setForeground(Color.WHITE);
         labelNome.setOpaque(true);
         labelNome.setBackground(new Color(0, 0, 0, 120));
-        labelNome.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+        labelNome.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
         pannelloNome.add(labelNome);
         
         // Campo di testo per il nome
         campoNome = new JTextField("", 10);
-        campoNome.setFont(new Font("Arial", Font.PLAIN, 18));
+        campoNome.setFont(new Font("Arial", Font.PLAIN, 14));
         campoNome.setHorizontalAlignment(JTextField.CENTER);
         campoNome.setToolTipText("Inserisci il tuo nome qui");
         campoNome.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(255, 215, 0), 2),
-            BorderFactory.createEmptyBorder(8, 10, 8, 10)
+            BorderFactory.createEmptyBorder(6, 8, 6, 8)
         ));
         campoNome.addActionListener(e -> avviaGioco());
         pannelloNome.add(campoNome);
         
         pannelloInferiore.add(pannelloNome);
-        pannelloInferiore.add(Box.createVerticalStrut(15)); // Spazio
-        
-        // Pannello per la scelta del punteggio
+        pannelloInferiore.add(Box.createVerticalStrut(10)); // Spazio        // Pannello per la scelta del punteggio
         JPanel pannelloPunteggio = new JPanel(new FlowLayout(FlowLayout.CENTER));
         pannelloPunteggio.setOpaque(false);
         
         // Etichetta per il punteggio
         JLabel labelPunteggio = new JLabel("Punti per vincere:", SwingConstants.CENTER);
-        labelPunteggio.setFont(new Font("Arial", Font.BOLD, 18));
+        labelPunteggio.setFont(new Font("Arial", Font.BOLD, 14));
         labelPunteggio.setForeground(Color.WHITE);
         labelPunteggio.setOpaque(true);
         labelPunteggio.setBackground(new Color(0, 0, 0, 120));
-        labelPunteggio.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
+        labelPunteggio.setBorder(BorderFactory.createEmptyBorder(6, 10, 6, 10));
         pannelloPunteggio.add(labelPunteggio);
         
         // Menu a tendina per il punteggio
         String[] opzioniPunteggio = {"21 punti", "31 punti", "41 punti (classico)"};
         comboPunteggio = new JComboBox<>(opzioniPunteggio);
         comboPunteggio.setSelectedIndex(2); // Default: 41 punti (classico)
-        comboPunteggio.setFont(new Font("Arial", Font.PLAIN, 16));
-        comboPunteggio.setPreferredSize(new Dimension(180, 35));
+        comboPunteggio.setFont(new Font("Arial", Font.PLAIN, 14));
+        comboPunteggio.setPreferredSize(new Dimension(150, 30));
         comboPunteggio.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(255, 215, 0), 2),
             BorderFactory.createEmptyBorder(2, 5, 2, 5)
@@ -194,6 +193,34 @@ public class MenuIniziale extends JFrame {
         pannelloPunteggio.add(comboPunteggio);
         
         pannelloInferiore.add(pannelloPunteggio);
+        pannelloInferiore.add(Box.createVerticalStrut(10)); // Spazio
+        
+        // Pannello per la scelta della modalità
+        JPanel pannelloModalita = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        pannelloModalita.setOpaque(false);
+        
+        // Etichetta per la modalità
+        JLabel labelModalita = new JLabel("Modalità di gioco:", SwingConstants.CENTER);
+        labelModalita.setFont(new Font("Arial", Font.BOLD, 14));
+        labelModalita.setForeground(Color.WHITE);
+        labelModalita.setOpaque(true);
+        labelModalita.setBackground(new Color(0, 0, 0, 120));
+        labelModalita.setBorder(BorderFactory.createEmptyBorder(6, 10, 6, 10));
+        pannelloModalita.add(labelModalita);
+        
+        // Menu a tendina per la modalità
+        String[] opzioniModalita = {"4 Giocatori (Classico)", "2 Giocatori (1v1)"};
+        comboModalita = new JComboBox<>(opzioniModalita);
+        comboModalita.setSelectedIndex(0); // Default: 4 giocatori
+        comboModalita.setFont(new Font("Arial", Font.PLAIN, 14));
+        comboModalita.setPreferredSize(new Dimension(150, 30));
+        comboModalita.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(255, 215, 0), 2),
+            BorderFactory.createEmptyBorder(2, 5, 2, 5)
+        ));
+        pannelloModalita.add(comboModalita);
+        
+        pannelloInferiore.add(pannelloModalita);
         pannelloInferiore.add(Box.createVerticalStrut(20)); // Spazio
         
         // Pulsante Inizia Gioco
@@ -208,14 +235,14 @@ public class MenuIniziale extends JFrame {
                 g2d.dispose();
             }
         };
-        btnInizia.setFont(new Font("Arial", Font.BOLD, 20));
+        btnInizia.setFont(new Font("Arial", Font.BOLD, 16));
         btnInizia.setBackground(PaletteColori.ROSSO_BOTTONE);
         btnInizia.setForeground(Color.WHITE);
         btnInizia.setOpaque(false);
         btnInizia.setBorderPainted(false);
         btnInizia.setFocusPainted(false);
         btnInizia.setContentAreaFilled(false);
-        btnInizia.setPreferredSize(new Dimension(200, 50));
+        btnInizia.setPreferredSize(new Dimension(160, 40));
         btnInizia.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnInizia.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -349,8 +376,11 @@ public class MenuIniziale extends JFrame {
             default: punteggioVittoria = 41; break;
         }
         
+        // Determina la modalità di gioco selezionata
+        boolean modalitaDueGiocatori = comboModalita.getSelectedIndex() == 1;
+        
         dispose();
-        SwingUtilities.invokeLater(() -> new TresetteGame(nomeGiocatore, punteggioVittoria).setVisible(true));
+        SwingUtilities.invokeLater(() -> new TresetteGame(nomeGiocatore, punteggioVittoria, modalitaDueGiocatori).setVisible(true));
     }
     
     private void mostraStatistiche() {

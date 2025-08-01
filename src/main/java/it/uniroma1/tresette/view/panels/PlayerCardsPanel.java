@@ -47,9 +47,25 @@ public class PlayerCardsPanel extends JPanel {
     private void createCardButtons() {
         for (int i = 0; i < 10; i++) {
             final int indice = i;
-            bottoniCarte[i] = UIComponentFactory.creaBottoneCarta(i, e -> gameController.giocaCarta(indice));
+            bottoniCarte[i] = UIComponentFactory.creaBottoneCarta(i, e -> {
+                // Disabilita immediatamente TUTTE le carte per evitare doppi click
+                disabilitaTutteLeCarte();
+                // Poi esegue la giocata
+                gameController.giocaCarta(indice);
+            });
             aggiungiEffettoHoverCarta(bottoniCarte[i], indice);
             add(bottoniCarte[i]);
+        }
+    }
+    
+    /**
+     * Disabilita immediatamente tutte le carte per evitare click multipli
+     */
+    private void disabilitaTutteLeCarte() {
+        for (JButton bottone : bottoniCarte) {
+            if (bottone != null) {
+                bottone.setEnabled(false);
+            }
         }
     }
     
@@ -129,20 +145,52 @@ public class PlayerCardsPanel extends JPanel {
                 return;
             }
             
+            // Verifica stati di base del gioco
+            boolean giocoInCorso = gameController.isGiocoInCorso();
+            boolean giocoInPausa = gameController.isGiocoInPausa();
+            int giocatoreCorrente = gameController.getGiocatoreCorrente();
+            
+            // Se non è il turno del giocatore umano (indice 0), disabilita tutto
+            if (!giocoInCorso || giocoInPausa || giocatoreCorrente != 0) {
+                for (JButton bottone : bottoniCarte) {
+                    if (bottone != null) {
+                        bottone.setEnabled(false);
+                    }
+                }
+                return;
+            }
+            
             // Abilita solo le carte giocabili
             it.uniroma1.tresette.model.Giocatore[] giocatori = gameController.getGiocatori();
             List<Carta> manoGiocatore = giocatori[0].getMano();
             
+            int carteAbilitate = 0;
             for (int i = 0; i < bottoniCarte.length; i++) {
                 if (bottoniCarte[i] != null && i < manoGiocatore.size()) {
                     Carta carta = manoGiocatore.get(i);
-                    boolean abilitaBottone = gameController.isGiocoInCorso() && 
-                                           !gameController.isGiocoInPausa() && 
-                                           gameController.getGiocatoreCorrente() == 0 && 
-                                           gameController.isCartaGiocabile(carta, 0);
-                    bottoniCarte[i].setEnabled(abilitaBottone);
+                    boolean isCartaGiocabile = gameController.isCartaGiocabile(carta, 0);
+                    
+                    bottoniCarte[i].setEnabled(isCartaGiocabile);
+                    
+                    if (isCartaGiocabile) {
+                        carteAbilitate++;
+                    }
                 } else if (bottoniCarte[i] != null) {
                     bottoniCarte[i].setEnabled(false);
+                }
+            }
+            
+            // CONTROLLO CRITICO: Se nessuna carta è abilitata ma il gioco è in corso, c'è un problema
+            if (carteAbilitate == 0 && manoGiocatore.size() > 0) {
+                System.err.println("ERRORE: Nessuna carta abilitata ma giocatore ha " + manoGiocatore.size() + " carte!");
+                System.err.println("ERRORE: Questo non dovrebbe mai succedere nel Tresette!");
+                
+                // In caso di emergenza, abilita tutte le carte
+                System.err.println("EMERGENZA: Abilitando tutte le carte");
+                for (int i = 0; i < bottoniCarte.length && i < manoGiocatore.size(); i++) {
+                    if (bottoniCarte[i] != null) {
+                        bottoniCarte[i].setEnabled(true);
+                    }
                 }
             }
         });
