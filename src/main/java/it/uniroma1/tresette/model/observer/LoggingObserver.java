@@ -1,87 +1,95 @@
 package it.uniroma1.tresette.model.observer;
 
 import it.uniroma1.tresette.model.Carta;
+import java.util.function.Consumer;
 
 /**
  * Observer per il logging degli eventi del gioco
- * Si occupa di registrare tutti gli eventi importanti nel log
+ * Si occupa di registrare tutti gli eventi significativi per debug e analisi
  */
 public class LoggingObserver implements GameStateObserver {
     
-    private final java.util.function.Consumer<String> logFunction;
-    private boolean loggingDettagliato = true;
+    private boolean loggingEnabled = true;
+    private boolean loggingDettagliato = false;
+    private Consumer<String> logFunction;
     
-    /**
-     * Costruttore che accetta una funzione per scrivere nel log
-     * @param logFunction funzione che accetta una stringa e la scrive nel log
-     */
-    public LoggingObserver(java.util.function.Consumer<String> logFunction) {
+    public LoggingObserver() {
+        // Costruttore di default
+        this.logFunction = System.out::println;
+    }
+    
+    public LoggingObserver(Consumer<String> logFunction) {
         this.logFunction = logFunction;
     }
     
-    /**
-     * Abilita o disabilita il logging dettagliato
-     * @param dettagliato true per logging dettagliato, false per logging essenziale
-     */
+    public LoggingObserver(boolean loggingEnabled) {
+        this.loggingEnabled = loggingEnabled;
+        this.logFunction = System.out::println;
+    }
+    
+    public void setLoggingEnabled(boolean enabled) {
+        this.loggingEnabled = enabled;
+    }
+    
     public void setLoggingDettagliato(boolean dettagliato) {
         this.loggingDettagliato = dettagliato;
     }
     
-    @Override
-    public void onGameStateChanged(GameState newState) {
-        // Se il logging dettagliato è disabilitato, non stampare MAI i messaggi di stato
-        if (!loggingDettagliato) {
-            return;
+    private void log(String messaggio) {
+        if (loggingEnabled && logFunction != null) {
+            logFunction.accept(messaggio);
         }
-        
-        String messaggio = formatMessage("STATO", "Cambio stato: " + newState.toString());
-        logFunction.accept(messaggio);
     }
     
     @Override
-    public void onCartaGiocata(Carta carta, String giocatore) {
-        String messaggio = giocatore + " gioca " + carta.toString();
-        logFunction.accept(messaggio);
+    public void onGameStateChanged(GameState nuovoStato) {
+        // Non logghiamo i cambi di stato per ridurre il rumore
+        // Solo eventi importanti come carte giocate e vincitori
+    }
+    
+    @Override
+    public void onCartaGiocata(Carta carta, String nomeGiocatore) {
+        if (loggingEnabled) {
+            log(nomeGiocatore + " gioca: " + carta);
+        }
     }
     
     @Override
     public void onPunteggiAggiornati(double punteggioCoppia1, double punteggioCoppia2) {
-        if (loggingDettagliato) {
-            String messaggio = formatMessage("PUNTEGGI", 
-                String.format("Aggiornamento punteggi - Coppia 1: %.2f, Coppia 2: %.2f", 
-                    punteggioCoppia1, punteggioCoppia2));
-            logFunction.accept(messaggio);
+        // Non logghiamo ogni aggiornamento punteggio per ridurre il rumore
+        if (loggingEnabled && loggingDettagliato) {
+            log("[DEBUG] Punteggi aggiornati - Coppia 1: " + punteggioCoppia1 + ", Coppia 2: " + punteggioCoppia2);
         }
     }
     
     @Override
-    public void onTurnoCambiato(String nomeGiocatore, int indiceTurno) {
-        if (loggingDettagliato) {
-            String messaggio = formatMessage("TURNO", "È il turno di " + nomeGiocatore);
-            logFunction.accept(messaggio);
+    public void onTurnoCambiato(String nomeGiocatore, int indiceGiocatore) {
+        // Non logghiamo ogni cambio turno per ridurre il rumore
+        if (loggingEnabled && loggingDettagliato) {
+            log("[DEBUG] Turno di: " + nomeGiocatore + " (indice: " + indiceGiocatore + ")");
         }
     }
     
     @Override
     public void onFineMano(String vincitore, double puntiMano) {
-        String messaggio = String.format("%s vince la mano (%.2f punti)", vincitore, puntiMano);
-        logFunction.accept(messaggio);
+        if (loggingEnabled) {
+            log(">> " + vincitore + " vince la presa (" + puntiMano + " punti)");
+        }
     }
     
     @Override
     public void onPausaToggled(boolean inPausa) {
-        String azione = inPausa ? "MESSO IN PAUSA" : "RIPRESO";
-        String messaggio = formatMessage("PAUSA", "Gioco " + azione);
-        logFunction.accept(messaggio);
+        if (loggingEnabled) {
+            log("=== GIOCO " + (inPausa ? "IN PAUSA" : "RIPRESO") + " ===");
+        }
     }
     
-    /**
-     * Formatta un messaggio con un prefisso
-     * @param tipo il tipo di evento
-     * @param messaggio il messaggio
-     * @return il messaggio formattato
-     */
-    private String formatMessage(String tipo, String messaggio) {
-        return String.format("[%s] %s", tipo, messaggio);
+    @Override
+    public void onFineManoCompleta(int numeroMano, double punteggioCoppia1, double punteggioCoppia2) {
+        if (loggingEnabled) {
+            log("=== FINE MANO " + numeroMano + " ===");
+            log("Punteggi totali - Coppia 1: " + String.format("%.1f", punteggioCoppia1) + 
+                ", Coppia 2: " + String.format("%.1f", punteggioCoppia2));
+        }
     }
 }

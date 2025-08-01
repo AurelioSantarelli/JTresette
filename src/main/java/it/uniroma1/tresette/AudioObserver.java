@@ -1,7 +1,9 @@
-package it.uniroma1.tresette.model.observer;
+package it.uniroma1.tresette;
 
+import javax.swing.Timer;
+import it.uniroma1.tresette.model.observer.GameStateObserver;
+import it.uniroma1.tresette.model.observer.GameState;
 import it.uniroma1.tresette.model.Carta;
-import it.uniroma1.tresette.TresetteGame;
 
 /**
  * Observer per il sistema audio del gioco
@@ -32,9 +34,17 @@ public class AudioObserver implements GameStateObserver {
         if (!audioAbilitato) return;
         
         switch (newState) {
+            case AVVIO_GIOCO:
+                // Riproduci il suono delle carte mischiate con un piccolo delay
+                // per assicurarsi che l'interfaccia sia pronta
+                javax.swing.Timer timer = new javax.swing.Timer(500, e -> {
+                    TresetteGame.SoundManager.riproduciSuonoCarteMischiate();
+                });
+                timer.setRepeats(false);
+                timer.start();
+                break;
             case DISTRIBUZIONE_CARTE:
-                // Riproduci suono delle carte mischiate
-                TresetteGame.SoundManager.riproduciSuonoCarteMischiate();
+                // Il suono delle carte mischiate viene già riprodotto all'avvio
                 break;
             case TERMINATO:
                 // Il suono di vittoria/sconfitta viene gestito altrove
@@ -55,7 +65,7 @@ public class AudioObserver implements GameStateObserver {
     public void onCartaGiocata(Carta carta, String giocatore) {
         if (!audioAbilitato) return;
         
-        // Riproduci suono della carta giocata
+        // Riproduci il suono della carta giocata
         TresetteGame.SoundManager.riproduciSuonoCarta();
     }
     
@@ -75,23 +85,25 @@ public class AudioObserver implements GameStateObserver {
     public void onFineMano(String vincitore, double puntiMano) {
         if (!audioAbilitato) return;
         
-        // Riproduci suono di fine mano
-        TresetteGame.SoundManager.riproduciSuonoFineMano();
+        // Riproduci il suono della fine mano con un ritardo di 2 secondi
+        javax.swing.Timer timer = new javax.swing.Timer(2000, e -> {
+            TresetteGame.SoundManager.riproduciSuonoFineMano();
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
     
     @Override
     public void onPausaToggled(boolean inPausa) {
         if (!audioAbilitato) return;
         
-        // Riproduci suono di click per pausa
+        // Riproduci il suono del click per il toggle della pausa
         TresetteGame.SoundManager.riproduciSuonoClick();
     }
     
     @Override
     public void onFineManoCompleta(int numeroMano, double punteggioCoppia1, double punteggioCoppia2) {
-        if (!audioAbilitato) return;
-        
-        // Riproduci suono di fine mano completa
-        TresetteGame.SoundManager.riproduciSuonoContinuaPartita();
+        // Nessun suono specifico per la fine di una mano completa
+        // Il suono viene gestito da onFineMano per ogni singola presa
     }
 }

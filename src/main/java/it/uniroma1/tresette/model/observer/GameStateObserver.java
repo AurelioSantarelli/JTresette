@@ -48,4 +48,12 @@ public interface GameStateObserver {
      * @param inPausa true se il gioco è stato messo in pausa, false se è stato ripreso
      */
     void onPausaToggled(boolean inPausa);
+    
+    /**
+     * Notifica la fine di una mano completa (10 carte)
+     * @param numeroMano numero della mano appena completata
+     * @param punteggioCoppia1 punteggio totale coppia 1
+     * @param punteggioCoppia2 punteggio totale coppia 2
+     */
+    void onFineManoCompleta(int numeroMano, double punteggioCoppia1, double punteggioCoppia2);
 }

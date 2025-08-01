@@ -1,4 +1,4 @@
-package it.uniroma1.tresette.model.observer;
+package it.uniroma1.tresette;
 
 /**
  * Enum che rappresenta i possibili stati del gioco Tresette.

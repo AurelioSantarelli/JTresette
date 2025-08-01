@@ -5,6 +5,7 @@ import it.uniroma1.tresette.model.Seme;
 import it.uniroma1.tresette.model.Giocatore;
 import it.uniroma1.tresette.model.StatisticheGiocatore;
 import it.uniroma1.tresette.model.observer.*;
+import it.uniroma1.tresette.model.observer.GameState; // Import specifico per risolvere l'ambiguità
 import it.uniroma1.tresette.view.utils.PaletteColori;
 import it.uniroma1.tresette.controller.GameController;
 
@@ -108,8 +109,10 @@ public class TresetteGame extends JFrame implements GameController.GameView {
     private final JPanel pannelloGioco = new JPanel();
     private JLabel labelPunteggi = new JLabel();
     private JLabel labelTurno = new JLabel();
+    private JLabel labelPunteggioVittoria = new JLabel(); // Label per mostrare il punteggio di vittoria
     private final JButton[] bottoniCarte;
     private final JLabel[] labelCarteGiocate;
+    private final JLabel[] labelNomiGiocatori; // Array per le label dei nomi
     private JTextArea areaLog = new JTextArea();
 
     private int giocatoreCorrente;
@@ -152,21 +155,23 @@ public class TresetteGame extends JFrame implements GameController.GameView {
         carteGiocate = new ArrayList<>();
         bottoniCarte = new JButton[10];
         labelCarteGiocate = new JLabel[4];
+        labelNomiGiocatori = new JLabel[4]; // Inizializza l'array per i nomi
 
         // Inizializza il sistema Observer
         gameObservable = new GameStateObservable();
         audioObserver = new AudioObserver(true); // Audio abilitato di default
         loggingObserver = new LoggingObserver(this::log); // Usa il metodo log esistente
         
-        // Disabilita il logging dettagliato per ridurre i messaggi nel log
-        loggingObserver.setLoggingDettagliato(false);
+        // Abilita il logging essenziale ma disabilita quello dettagliato
+        loggingObserver.setLoggingEnabled(true); // LOGGING RIABILITATO per eventi essenziali
+        loggingObserver.setLoggingDettagliato(false); // Solo eventi importanti, non debug
         
         // Inizializza il debug observer (COMPLETAMENTE DISABILITATO)
         debugObserver = new DebugObserver(false); // Debug DISABILITATO
         
-        // Registra gli observer (debug observer NON registrato)
+        // Registra audio e logging observer - debug disabilitato
         gameObservable.addObserver(audioObserver);
-        gameObservable.addObserver(loggingObserver);
+        gameObservable.addObserver(loggingObserver); // LOGGING RIABILITATO
         // gameObservable.addObserver(debugObserver); // DEBUG COMPLETAMENTE DISABILITATO
 
         // Inizializza il controller
@@ -260,22 +265,32 @@ public class TresetteGame extends JFrame implements GameController.GameView {
         });
         
         btnPausaRiprendi.addActionListener(e -> {
-            SoundManager.riproduciSuonoClick();
+            // Non riproduciamo il suono qui per evitare il doppio click
+            // Il suono viene gestito dall'AudioObserver tramite notifyPausaToggled()
             gameController.togglePausa();
         });
         
         panelPausa.add(btnPausaRiprendi);
         panelSuperiore.add(panelPausa, BorderLayout.WEST);
         
+        // Pannello per il punteggio di vittoria in alto a destra
+        JPanel panelPunteggioVittoria = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelPunteggioVittoria.setOpaque(false);
+        
+        labelPunteggioVittoria = new JLabel("Partita fino a " + (int)PUNTEGGIO_VITTORIA + " punti", SwingConstants.RIGHT);
+        labelPunteggioVittoria.setForeground(Color.WHITE);
+        labelPunteggioVittoria.setFont(new Font("Arial", Font.BOLD, 14));
+        panelPunteggioVittoria.add(labelPunteggioVittoria);
+        panelSuperiore.add(panelPunteggioVittoria, BorderLayout.EAST);
+        
         // Pannello centrale per i punteggi e turno
         JPanel panelPunteggiTurno = new JPanel(new GridLayout(2, 1));
         panelPunteggiTurno.setOpaque(false);
         
-        labelPunteggi = new JLabel("Punteggi:" + giocatori[0].getNome() + " - " + giocatori[2].getNome() +
-                " : 0 | " + giocatori[1].getNome() + " - " + giocatori[3].getNome() + " : 0", SwingConstants.CENTER);
+        labelPunteggi = new JLabel("Punteggi: Caricamento...", SwingConstants.CENTER);
 
         labelPunteggi.setForeground(Color.WHITE);
-        labelTurno = new JLabel("Turno: Tu", SwingConstants.CENTER);
+        labelTurno = new JLabel("Turno: Preparazione...", SwingConstants.CENTER);
         labelTurno.setForeground(Color.WHITE);
         panelPunteggiTurno.add(labelPunteggi);
         panelPunteggiTurno.add(labelTurno);
@@ -299,10 +314,10 @@ public class TresetteGame extends JFrame implements GameController.GameView {
             panelGiocatore.setBorder(BorderFactory.createRaisedBevelBorder());
 
             // Label con il nome del giocatore
-            JLabel labelNome = new JLabel(giocatori[i].getNome(), SwingConstants.CENTER);
-            labelNome.setForeground(Color.WHITE);
-            labelNome.setFont(new Font("Arial", Font.BOLD, 12));
-            panelGiocatore.add(labelNome, BorderLayout.NORTH);
+            labelNomiGiocatori[i] = new JLabel("Giocatore " + (i + 1), SwingConstants.CENTER);
+            labelNomiGiocatori[i].setForeground(Color.WHITE);
+            labelNomiGiocatori[i].setFont(new Font("Arial", Font.BOLD, 12));
+            panelGiocatore.add(labelNomiGiocatori[i], BorderLayout.NORTH);
 
             // Label per la carta (modificata per non avere bordo)
             labelCarteGiocate[i] = new JLabel("", SwingConstants.CENTER);
@@ -348,10 +363,16 @@ public class TresetteGame extends JFrame implements GameController.GameView {
                 
                 @Override
                 public void mouseExited(java.awt.event.MouseEvent evt) {
-                    if (bottoniCarte[indice].isVisible() && indice < giocatori[0].getMano().size()) {
-                        // Ripristina l'immagine originale
-                        Carta carta = giocatori[0].getMano().get(indice);
-                        bottoniCarte[indice].setIcon(carta.getImmagine());
+                    if (bottoniCarte[indice].isVisible() && gameController != null) {
+                        // Ripristina l'immagine originale dal controller
+                        it.uniroma1.tresette.model.Giocatore[] giocatoriController = gameController.getGiocatori();
+                        if (giocatoriController != null && giocatoriController.length > 0) {
+                            List<Carta> manoGiocatore = giocatoriController[0].getMano();
+                            if (indice < manoGiocatore.size()) {
+                                Carta carta = manoGiocatore.get(indice);
+                                bottoniCarte[indice].setIcon(carta.getImmagine());
+                            }
+                        }
                     }
                 }
             });
@@ -425,9 +446,7 @@ public class TresetteGame extends JFrame implements GameController.GameView {
         btnNuovaPartita.addActionListener(e -> {
             // Riproduci il suono del click
             SoundManager.riproduciSuonoClick();
-            // Oppure usa il click sintetico se non hai file audio:
-            // SoundManager.riproduciClickSintetico();
-
+            
             if (giocoInCorso) {
                 int risposta = JOptionPane.showConfirmDialog(
                         this,
@@ -689,6 +708,12 @@ public class TresetteGame extends JFrame implements GameController.GameView {
     }
 
     private void giocaCarta(int indice) {
+        // METODO LEGACY DISABILITATO - Ora usa solo GameController
+        // Il GameController gestisce tutta la logica di gioco
+        // I bottoni chiamano direttamente gameController.giocaCarta(indice)
+        return;
+        
+        /*
         if (!giocoInCorso || giocoInPausa || giocatoreCorrente != 0 || indice >= giocatori[0].getMano().size())
             return;
 
@@ -699,45 +724,19 @@ public class TresetteGame extends JFrame implements GameController.GameView {
             return;
         }
         giocaCartaEffettiva(carta);
+        */
     }
 
     private void giocaCartaEffettiva(Carta carta) {
-        giocatori[giocatoreCorrente].rimuoviCarta(carta);
-        carteGiocate.add(carta);
-        
-        if (carteGiocate.size() == 1) {
-            semeRichiesto = carta.getSeme();
-        }
-        
-        labelCarteGiocate[giocatoreCorrente].setIcon(carta.getImmagine());
-        
-        // Notifica che una carta è stata giocata
-        gameObservable.notifyCartaGiocata(carta, giocatori[giocatoreCorrente].getNome());
-        
-        giocatoreCorrente = (giocatoreCorrente + 1) % 4;
-        
-        if (carteGiocate.size() == 4) {
-            gameObservable.notifyGameStateChanged(GameState.VALUTAZIONE_MANO);
-            javax.swing.Timer timer = new javax.swing.Timer(1500, e -> fineMano());
-            timer.setRepeats(false);
-            timer.start();
-        } else {
-            // Notifica cambio turno
-            gameObservable.notifyTurnoCambiato(giocatori[giocatoreCorrente].getNome(), giocatoreCorrente);
-            
-            aggiornaGUI();
-            if (!giocatori[giocatoreCorrente].isUmano()) {
-                gameObservable.notifyGameStateChanged(GameState.TURNO_AI);
-                javax.swing.Timer timer = new javax.swing.Timer(1000, e -> turnoAI());
-                timer.setRepeats(false);
-                timer.start();
-            } else {
-                gameObservable.notifyGameStateChanged(GameState.TURNO_UMANO);
-            }
-        }
+        // METODO LEGACY DISABILITATO - Ora usa solo GameController
+        // Questo metodo modificava le posizioni dei giocatori causando il problema
+        return;
     }
 
     private void turnoAI() {
+        // METODO LEGACY DISABILITATO - Ora usa solo GameController
+        return;
+        /* CODICE LEGACY COMMENTATO
         if (carteGiocate.size() == 4 || !giocoInCorso || giocoInPausa)
             return;
 
@@ -745,66 +744,12 @@ public class TresetteGame extends JFrame implements GameController.GameView {
         if (carta != null) {
             giocaCartaEffettiva(carta);
         }
+        */
     }
 
     private void fineMano() {
-        int vincitore = determinaVincitore();
-        giocatori[vincitore].getCartePrese().addAll(carteGiocate);
-
-        double puntiRealiMano = carteGiocate.stream().mapToInt(Carta::getPunti).sum() / 100.0;
-        
-        // Controlla se è l'ultima mano (mano 10) e assegna il punto dell'ultima
-        if (giocatori[0].getMano().isEmpty()) {
-            // È l'ultima mano, assegna il punto dell'ultima alla squadra vincitrice
-            if (vincitore == 0 || vincitore == 2) {
-                // Squadra 1 (giocatore umano + Viligelmo) vince l'ultima mano
-                // Aggiungi una carta con 100 punti (1 punto) alle carte prese del vincitore
-                Carta puntoUltima = new Carta(1, Seme.COPPE); // Carta fittizia per rappresentare il punto
-                giocatori[vincitore].getCartePrese().add(puntoUltima);
-                log("*** " + giocatori[vincitore].getNome() + " vince l'ULTIMA MANO e guadagna 1 punto extra! ***");
-                puntiRealiMano += 1.0; // Aggiungi il punto dell'ultima
-            } else {
-                // Squadra 2 (Marcovaldo + Astolfo) vince l'ultima mano
-                Carta puntoUltima = new Carta(1, Seme.COPPE); // Carta fittizia per rappresentare il punto
-                giocatori[vincitore].getCartePrese().add(puntoUltima);
-                log("*** " + giocatori[vincitore].getNome() + " vince l'ULTIMA MANO e guadagna 1 punto extra! ***");
-                puntiRealiMano += 1.0; // Aggiungi il punto dell'ultima
-            }
-        }
-
-        // Notifica la fine della mano
-        gameObservable.notifyFineMano(giocatori[vincitore].getNome(), puntiRealiMano);
-
-        carteGiocate.clear();
-        semeRichiesto = null;
-        giocatoreCorrente = vincitore;
-        primoDiMano = vincitore;
-
-        for (JLabel label : labelCarteGiocate) {
-            label.setIcon(null);
-            label.setBackground(PaletteColori.COLORE_TAVOLO);
-        }
-
-        mano++;
-
-        if (giocatori[0].getMano().isEmpty()) {
-            finePartita();
-        } else {
-            aggiornaGUI();
-            log("--- Mano " + mano + " - Inizia " + giocatori[giocatoreCorrente].getNome() + " ---");
-            
-            // Notifica cambio turno
-            gameObservable.notifyTurnoCambiato(giocatori[giocatoreCorrente].getNome(), giocatoreCorrente);
-            
-            if (!giocatori[giocatoreCorrente].isUmano()) {
-                gameObservable.notifyGameStateChanged(GameState.TURNO_AI);
-                javax.swing.Timer timer = new javax.swing.Timer(1000, e -> turnoAI());
-                timer.setRepeats(false);
-                timer.start();
-            } else {
-                gameObservable.notifyGameStateChanged(GameState.TURNO_UMANO);
-            }
-        }
+        // METODO LEGACY COMPLETAMENTE DISABILITATO - Ora usa solo GameController
+        return;
     }
 
     private int determinaVincitore() {
@@ -1179,6 +1124,14 @@ public class TresetteGame extends JFrame implements GameController.GameView {
     }
     
     /**
+     * Abilita o disabilita completamente il logging
+     * @param abilitato true per abilitare il logging
+     */
+    public void setLoggingAbilitato(boolean abilitato) {
+        loggingObserver.setLoggingEnabled(abilitato);
+    }
+    
+    /**
      * Abilita o disabilita il debug mode
      * @param abilitato true per abilitare il debug
      */
@@ -1206,10 +1159,30 @@ public class TresetteGame extends JFrame implements GameController.GameView {
     @Override
     public void aggiornaInterfaccia() {
         SwingUtilities.invokeLater(() -> {
+            aggiornaNomiGiocatori();
             aggiornaManiGiocatori();
             aggiornaCarteGiocate();
             repaint();
         });
+    }
+    
+    /**
+     * Aggiorna i nomi dei giocatori nei riquadri
+     */
+    private void aggiornaNomiGiocatori() {
+        if (gameController != null) {
+            it.uniroma1.tresette.model.Giocatore[] giocatoriController = gameController.getGiocatori();
+            if (giocatoriController != null && giocatoriController.length >= 4) {
+                // Mapping coerente con aggiornaCarteGiocate():
+                // giocatore[0] (Umano) -> riquadro[1], giocatore[1] (Marcovaldo) -> riquadro[3]
+                // giocatore[2] (Viligelmo) -> riquadro[0], giocatore[3] (Astolfo) -> riquadro[2]
+                
+                labelNomiGiocatori[0].setText(giocatoriController[2].getNome()); // Riquadro 0: Viligelmo
+                labelNomiGiocatori[1].setText(giocatoriController[0].getNome()); // Riquadro 1: Giocatore umano
+                labelNomiGiocatori[2].setText(giocatoriController[3].getNome()); // Riquadro 2: Astolfo
+                labelNomiGiocatori[3].setText(giocatoriController[1].getNome()); // Riquadro 3: Marcovaldo
+            }
+        }
     }
     
     @Override
@@ -1217,7 +1190,25 @@ public class TresetteGame extends JFrame implements GameController.GameView {
         SwingUtilities.invokeLater(() -> {
             this.punteggioCoppia1Totale = punteggioCoppia1;
             this.punteggioCoppia2Totale = punteggioCoppia2;
+            
+            // Usa i nomi dal controller
+            it.uniroma1.tresette.model.Giocatore[] giocatoriController = gameController.getGiocatori();
+            labelPunteggi.setText(String.format("Punteggi Totali: " + giocatoriController[0].getNome() + " - " + giocatoriController[2].getNome() +
+                    " : %.1f | " + giocatoriController[1].getNome() + " - " + giocatoriController[3].getNome() + " : %.1f",
+                    punteggioCoppia1, punteggioCoppia2));
+            
             repaint();
+        });
+    }
+    
+    @Override
+    public void aggiornaTurno(String nomeGiocatore, int indiceGiocatore) {
+        SwingUtilities.invokeLater(() -> {
+            if (gameController.isGiocoInPausa()) {
+                labelTurno.setText("GIOCO IN PAUSA - Premi '▶' per continuare");
+            } else {
+                labelTurno.setText("Turno: " + nomeGiocatore);
+            }
         });
     }
     
@@ -1239,9 +1230,31 @@ public class TresetteGame extends JFrame implements GameController.GameView {
     @Override
     public void abilitaBottoniCarte(boolean abilita) {
         SwingUtilities.invokeLater(() -> {
-            for (JButton bottone : bottoniCarte) {
-                if (bottone != null) {
-                    bottone.setEnabled(abilita);
+            // Se stiamo disabilitando, disabilita tutto
+            if (!abilita) {
+                for (JButton bottone : bottoniCarte) {
+                    if (bottone != null) {
+                        bottone.setEnabled(false);
+                    }
+                }
+                return;
+            }
+            
+            // Altrimenti abilita solo le carte giocabili secondo le regole
+            it.uniroma1.tresette.model.Giocatore[] giocatori = gameController.getGiocatori();
+            List<Carta> manoGiocatore = giocatori[0].getMano();
+            
+            for (int i = 0; i < bottoniCarte.length; i++) {
+                if (bottoniCarte[i] != null && i < manoGiocatore.size()) {
+                    Carta carta = manoGiocatore.get(i);
+                    // Abilita solo se è il turno del giocatore umano E la carta è giocabile
+                    boolean abilitaBottone = gameController.isGiocoInCorso() && 
+                                           !gameController.isGiocoInPausa() && 
+                                           gameController.getGiocatoreCorrente() == 0 && 
+                                           gameController.isCartaGiocabile(carta, 0);
+                    bottoniCarte[i].setEnabled(abilitaBottone);
+                } else if (bottoniCarte[i] != null) {
+                    bottoniCarte[i].setEnabled(false);
                 }
             }
         });
@@ -1250,14 +1263,25 @@ public class TresetteGame extends JFrame implements GameController.GameView {
     @Override
     public void aggiornaCarteGiocate() {
         SwingUtilities.invokeLater(() -> {
-            List<Carta> carteGiocate = gameController.getCarteGiocate();
-            for (int i = 0; i < 4; i++) {
-                if (i < carteGiocate.size()) {
-                    labelCarteGiocate[i].setIcon(carteGiocate.get(i).getImmagine());
-                    labelCarteGiocate[i].setText("");
+            // Mapping fisso delle posizioni:
+            // Posizione fisica 0 (alto-sx) -> riquadro UI 0 -> Giocatore 1 (AI avversario)
+            // Posizione fisica 1 (alto-dx) -> riquadro UI 1 -> Giocatore 3 (AI avversario)  
+            // Posizione fisica 2 (basso-sx) -> riquadro UI 2 -> Giocatore 0 (Umano)
+            // Posizione fisica 3 (basso-dx) -> riquadro UI 3 -> Giocatore 2 (AI compagno)
+            
+            // Mapping delle posizioni dei giocatori ai riquadri UI
+            int[] mappingPosizioni = {1, 3, 0, 2}; // giocatore[i] -> riquadro[mappingPosizioni[i]]
+            
+            for (int giocatore = 0; giocatore < 4; giocatore++) {
+                int riquadroUI = mappingPosizioni[giocatore];
+                Carta carta = gameController.getCartaPerPosizione(giocatore);
+                
+                if (carta != null) {
+                    labelCarteGiocate[riquadroUI].setIcon(carta.getImmagine());
+                    labelCarteGiocate[riquadroUI].setText("");
                 } else {
-                    labelCarteGiocate[i].setIcon(null);
-                    labelCarteGiocate[i].setText("Carta " + (i + 1));
+                    labelCarteGiocate[riquadroUI].setIcon(null);
+                    labelCarteGiocate[riquadroUI].setText(""); // Rimosso il testo "Carta X"
                 }
             }
         });
@@ -1272,9 +1296,17 @@ public class TresetteGame extends JFrame implements GameController.GameView {
             List<Carta> manoGiocatore = giocatori[0].getMano();
             for (int i = 0; i < 10; i++) {
                 if (i < manoGiocatore.size()) {
-                    bottoniCarte[i].setIcon(manoGiocatore.get(i).getImmagine());
+                    Carta carta = manoGiocatore.get(i);
+                    bottoniCarte[i].setIcon(carta.getImmagine());
                     bottoniCarte[i].setText("");
                     bottoniCarte[i].setVisible(true);
+                    
+                    // Abilita solo le carte giocabili secondo le regole del seme
+                    boolean abilitaBottone = gameController.isGiocoInCorso() && 
+                                           !gameController.isGiocoInPausa() && 
+                                           gameController.getGiocatoreCorrente() == 0 && 
+                                           gameController.isCartaGiocabile(carta, 0);
+                    bottoniCarte[i].setEnabled(abilitaBottone);
                 } else {
                     bottoniCarte[i].setVisible(false);
                 }
@@ -1299,7 +1331,7 @@ public class TresetteGame extends JFrame implements GameController.GameView {
     }
 
     // Classe per gestire i suoni
-    static class SoundManager {
+    public static class SoundManager {
         private static Clip clipCartaGiocata;
         private static Clip clipVittoria;
         private static Clip clipSconfitta;

@@ -1,150 +1,71 @@
 package it.uniroma1.tresette.model.observer;
 
 import it.uniroma1.tresette.model.Carta;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Classe Observable per il pattern Observer/Observable del gioco Tresette.
- * Gestisce la lista degli observer e le notifiche degli eventi del gioco.
- * Utilizza CopyOnWriteArrayList per garantire thread-safety.
+ * Classe che implementa il pattern Observer per notificare i cambiamenti di stato del gioco
  */
 public class GameStateObservable {
     
-    private final CopyOnWriteArrayList<GameStateObserver> observers;
-    private GameState currentState;
+    private List<GameStateObserver> observers = new ArrayList<>();
+    private GameState currentState = GameState.NON_INIZIATO;
     
-    public GameStateObservable() {
-        this.observers = new CopyOnWriteArrayList<>();
-        this.currentState = GameState.NON_INIZIATO;
-    }
-    
-    /**
-     * Aggiunge un observer alla lista
-     * @param observer l'observer da aggiungere
-     */
     public void addObserver(GameStateObserver observer) {
         if (observer != null && !observers.contains(observer)) {
             observers.add(observer);
         }
     }
     
-    /**
-     * Rimuove un observer dalla lista
-     * @param observer l'observer da rimuovere
-     */
     public void removeObserver(GameStateObserver observer) {
         observers.remove(observer);
     }
     
-    /**
-     * Rimuove tutti gli observer
-     */
-    public void clearObservers() {
-        observers.clear();
-    }
-    
-    /**
-     * Restituisce il numero di observer registrati
-     * @return numero di observer
-     */
-    public int getObserverCount() {
-        return observers.size();
-    }
-    
-    /**
-     * Restituisce lo stato corrente del gioco
-     * @return lo stato corrente
-     */
     public GameState getCurrentState() {
         return currentState;
     }
     
-    /**
-     * Notifica il cambio di stato del gioco a tutti gli observer
-     * @param nuovoStato il nuovo stato del gioco
-     */
     public void notifyGameStateChanged(GameState nuovoStato) {
         this.currentState = nuovoStato;
         for (GameStateObserver observer : observers) {
-            try {
-                observer.onGameStateChanged(nuovoStato);
-            } catch (Exception e) {
-                System.err.println("Errore nella notifica dello stato del gioco: " + e.getMessage());
-            }
+            observer.onGameStateChanged(nuovoStato);
         }
     }
     
-    /**
-     * Notifica che una carta è stata giocata
-     * @param carta la carta giocata
-     * @param nomeGiocatore il nome del giocatore che ha giocato la carta
-     */
     public void notifyCartaGiocata(Carta carta, String nomeGiocatore) {
         for (GameStateObserver observer : observers) {
-            try {
-                observer.onCartaGiocata(carta, nomeGiocatore);
-            } catch (Exception e) {
-                System.err.println("Errore nella notifica carta giocata: " + e.getMessage());
-            }
+            observer.onCartaGiocata(carta, nomeGiocatore);
         }
     }
     
-    /**
-     * Notifica l'aggiornamento dei punteggi
-     * @param punteggioCoppia1 punteggio della coppia 1
-     * @param punteggioCoppia2 punteggio della coppia 2
-     */
     public void notifyPunteggiAggiornati(double punteggioCoppia1, double punteggioCoppia2) {
         for (GameStateObserver observer : observers) {
-            try {
-                observer.onPunteggiAggiornati(punteggioCoppia1, punteggioCoppia2);
-            } catch (Exception e) {
-                System.err.println("Errore nella notifica punteggi aggiornati: " + e.getMessage());
-            }
+            observer.onPunteggiAggiornati(punteggioCoppia1, punteggioCoppia2);
         }
     }
     
-    /**
-     * Notifica il cambio di turno
-     * @param nomeGiocatore nome del giocatore di cui è il turno
-     * @param indiceGiocatore indice del giocatore (0-3)
-     */
     public void notifyTurnoCambiato(String nomeGiocatore, int indiceGiocatore) {
         for (GameStateObserver observer : observers) {
-            try {
-                observer.onTurnoCambiato(nomeGiocatore, indiceGiocatore);
-            } catch (Exception e) {
-                System.err.println("Errore nella notifica cambio turno: " + e.getMessage());
-            }
+            observer.onTurnoCambiato(nomeGiocatore, indiceGiocatore);
         }
     }
     
-    /**
-     * Notifica la fine di una mano
-     * @param vincitore nome del giocatore che ha vinto la mano
-     * @param puntiMano punti totalizzati nella mano
-     */
     public void notifyFineMano(String vincitore, double puntiMano) {
         for (GameStateObserver observer : observers) {
-            try {
-                observer.onFineMano(vincitore, puntiMano);
-            } catch (Exception e) {
-                System.err.println("Errore nella notifica fine mano: " + e.getMessage());
-            }
+            observer.onFineMano(vincitore, puntiMano);
         }
     }
     
-    /**
-     * Notifica il toggle della pausa
-     * @param inPausa true se il gioco è stato messo in pausa, false se è stato ripreso
-     */
     public void notifyPausaToggled(boolean inPausa) {
         for (GameStateObserver observer : observers) {
-            try {
-                observer.onPausaToggled(inPausa);
-            } catch (Exception e) {
-                System.err.println("Errore nella notifica pausa toggled: " + e.getMessage());
-            }
+            observer.onPausaToggled(inPausa);
+        }
+    }
+    
+    public void notifyFineManoCompleta(int numeroMano, double punteggioCoppia1, double punteggioCoppia2) {
+        for (GameStateObserver observer : observers) {
+            observer.onFineManoCompleta(numeroMano, punteggioCoppia1, punteggioCoppia2);
         }
     }
 }

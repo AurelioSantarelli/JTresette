@@ -1,164 +1,93 @@
 package it.uniroma1.tresette.model.observer;
 
 import it.uniroma1.tresette.model.Carta;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 /**
- * Observer di debug che stampa informazioni dettagliate sulla console
- * Utile per il debugging e l'analisi del comportamento del gioco
+ * Observer per il debug degli eventi del gioco
+ * Fornisce informazioni dettagliate per il debugging durante lo sviluppo
  */
 public class DebugObserver implements GameStateObserver {
     
-    private boolean debugAbilitato = false;
-    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
-    private int carteGiocateCount = 0;
-    private int cambiTurnoCount = 0;
-    private int maniCompletateCount = 0;
+    private boolean debugEnabled = true;
+    private int cartePlayed = 0;
+    private int stateChanges = 0;
     
     public DebugObserver() {
-        // Costruttore di default - debug disabilitato
+        // Costruttore di default
     }
     
-    public DebugObserver(boolean debugAbilitato) {
-        this.debugAbilitato = debugAbilitato;
+    public DebugObserver(boolean debugEnabled) {
+        this.debugEnabled = debugEnabled;
+    }
+    
+    public void setDebugEnabled(boolean enabled) {
+        this.debugEnabled = enabled;
     }
     
     public void setDebugAbilitato(boolean abilitato) {
-        this.debugAbilitato = abilitato;
-        if (abilitato) {
-            printDebug("=== DEBUG ABILITATO ===");
-            printStats();
-        } else {
-            printDebug("=== DEBUG DISABILITATO ===");
-        }
+        this.debugEnabled = abilitato;
     }
     
     public boolean isDebugAbilitato() {
-        return debugAbilitato;
+        return debugEnabled;
+    }
+    
+    public void resetStats() {
+        cartePlayed = 0;
+        stateChanges = 0;
     }
     
     @Override
-    public void onGameStateChanged(GameState newState) {
-        if (!debugAbilitato) return;
-        
-        printDebug("STATO CAMBIATO: " + newState.toString());
-        
-        // Informazioni aggiuntive per stati specifici
-        switch (newState) {
-            case NON_INIZIATO:
-                printDebug("  └─ Gioco pronto per l'inizializzazione");
-                break;
-            case IN_CORSO:
-                printDebug("  └─ Gioco attivo e funzionante");
-                break;
-            case NUOVA_MANO:
-                printDebug("  └─ Preparazione per iniziare nuova mano");
-                break;
-            case DISTRIBUZIONE_CARTE:
-                printDebug("  └─ Preparazione nuova mano in corso...");
-                break;
-            case TURNO_UMANO:
-                printDebug("  └─ Aspettando input dall'utente");
-                break;
-            case TURNO_AI:
-                printDebug("  └─ AI sta pensando alla mossa...");
-                break;
-            case VALUTAZIONE_MANO:
-                printDebug("  └─ Determinazione vincitore mano...");
-                break;
-            case IN_PAUSA:
-                printDebug("  └─ Tutti i processi di gioco sospesi");
-                break;
-            case TERMINATO:
-                printDebug("  └─ Gioco concluso definitivamente");
-                printStats();
-                break;
+    public void onGameStateChanged(GameState nuovoStato) {
+        if (debugEnabled) {
+            stateChanges++;
+            System.out.println("[DEBUG] === CAMBIO STATO === " + nuovoStato + " (cambio #" + stateChanges + ")");
         }
     }
     
     @Override
-    public void onCartaGiocata(Carta carta, String giocatore) {
-        if (!debugAbilitato) return;
-        
-        carteGiocateCount++;
-        printDebug(String.format("CARTA GIOCATA #%d: %s da %s [Punti: %d, Forza: %d]", 
-            carteGiocateCount, carta.toString(), giocatore, 
-            carta.getPunti(), carta.getForzaPerPresa()));
+    public void onCartaGiocata(Carta carta, String nomeGiocatore) {
+        if (debugEnabled) {
+            cartePlayed++;
+            System.out.println("[DEBUG] Carta giocata (#" + cartePlayed + "): " + nomeGiocatore + " -> " + carta.toString());
+        }
     }
     
     @Override
     public void onPunteggiAggiornati(double punteggioCoppia1, double punteggioCoppia2) {
-        if (!debugAbilitato) return;
-        
-        printDebug(String.format("PUNTEGGI AGGIORNATI: Coppia1=%.2f, Coppia2=%.2f [Differenza: %.2f]", 
-            punteggioCoppia1, punteggioCoppia2, Math.abs(punteggioCoppia1 - punteggioCoppia2)));
+        if (debugEnabled) {
+            System.out.println("[DEBUG] Punteggi aggiornati - Coppia 1: " + punteggioCoppia1 + ", Coppia 2: " + punteggioCoppia2);
+        }
     }
     
     @Override
-    public void onTurnoCambiato(String nomeGiocatore, int indiceTurno) {
-        if (!debugAbilitato) return;
-        
-        cambiTurnoCount++;
-        String tipoGiocatore = (indiceTurno == 0) ? "UMANO" : "AI";
-        printDebug(String.format("TURNO CAMBIATO #%d: %s [Indice: %d, Tipo: %s]", 
-            cambiTurnoCount, nomeGiocatore, indiceTurno, tipoGiocatore));
+    public void onTurnoCambiato(String nomeGiocatore, int indiceGiocatore) {
+        if (debugEnabled) {
+            System.out.println("[DEBUG] === TURNO DI " + nomeGiocatore + " (indice: " + indiceGiocatore + ") ===");
+        }
     }
     
     @Override
     public void onFineMano(String vincitore, double puntiMano) {
-        if (!debugAbilitato) return;
-        
-        maniCompletateCount++;
-        printDebug(String.format("MANO COMPLETATA #%d: Vincitore=%s, Punti=%.2f", 
-            maniCompletateCount, vincitore, puntiMano));
-        
-        // Statistiche aggiuntive ogni 5 mani
-        if (maniCompletateCount % 5 == 0) {
-            printDebug("  └─ Checkpoint ogni 5 mani raggiunto");
-            printStats();
+        if (debugEnabled) {
+            System.out.println("[DEBUG] === FINE MANO ===");
+            System.out.println("[DEBUG] Vincitore: " + vincitore + ", Punti: " + puntiMano);
         }
     }
     
     @Override
     public void onPausaToggled(boolean inPausa) {
-        if (!debugAbilitato) return;
-        
-        String azione = inPausa ? "ATTIVATA" : "DISATTIVATA";
-        printDebug("PAUSA " + azione + " dall'utente");
-    }
-    
-    /**
-     * Stampa un messaggio di debug con timestamp
-     */
-    private void printDebug(String messaggio) {
-        String timestamp = LocalTime.now().format(timeFormatter);
-        System.out.println(String.format("[DEBUG %s] %s", timestamp, messaggio));
-    }
-    
-    /**
-     * Stampa statistiche riassuntive
-     */
-    private void printStats() {
-        printDebug("=== STATISTICHE DEBUG ===");
-        printDebug("  Carte giocate totali: " + carteGiocateCount);
-        printDebug("  Cambi turno totali: " + cambiTurnoCount);
-        printDebug("  Mani completate: " + maniCompletateCount);
-        if (carteGiocateCount > 0) {
-            printDebug("  Media carte per mano: " + String.format("%.1f", (double)carteGiocateCount / Math.max(1, maniCompletateCount)));
+        if (debugEnabled) {
+            System.out.println("[DEBUG] === PAUSA " + (inPausa ? "ON" : "OFF") + " ===");
         }
-        printDebug("========================");
     }
     
-    /**
-     * Reset delle statistiche (utile per nuove partite)
-     */
-    public void resetStats() {
-        carteGiocateCount = 0;
-        cambiTurnoCount = 0;
-        maniCompletateCount = 0;
-        if (debugAbilitato) {
-            printDebug("Statistiche debug resettate");
+    @Override
+    public void onFineManoCompleta(int numeroMano, double punteggioCoppia1, double punteggioCoppia2) {
+        if (debugEnabled) {
+            System.out.println("[DEBUG] === FINE MANO COMPLETA " + numeroMano + " ===");
+            System.out.println("[DEBUG] Tutte le 10 carte giocate - Coppia 1: " + punteggioCoppia1 + ", Coppia 2: " + punteggioCoppia2);
+            System.out.println("[DEBUG] Statistiche debug - Carte giocate: " + cartePlayed + ", Cambi di stato: " + stateChanges);
         }
     }
 }
