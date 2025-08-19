@@ -4,6 +4,7 @@ import it.uniroma1.tresette.controller.GameController;
 import it.uniroma1.tresette.model.Carta;
 import it.uniroma1.tresette.view.components.UIComponentFactory;
 import it.uniroma1.tresette.view.icons.IconFactory;
+import it.uniroma1.tresette.view.icons.CardImageLoader;
 
 import javax.swing.*;
 import java.awt.*;
@@ -104,7 +105,10 @@ public class PlayerCardsPanel extends JPanel {
             List<Carta> manoGiocatore = giocatori[0].getMano();
             if (indice < manoGiocatore.size()) {
                 Carta carta = manoGiocatore.get(indice);
-                bottoniCarte[indice].setIcon(carta.getImmagine());
+                // Carica immagine tramite CardImageLoader per non dipendere dal model
+                java.awt.image.BufferedImage img = CardImageLoader.load(carta.getRisorsaNome());
+                if (img != null) bottoniCarte[indice].setIcon(new javax.swing.ImageIcon(img));
+                else bottoniCarte[indice].setIcon(null);
             }
         }
     }
@@ -120,7 +124,9 @@ public class PlayerCardsPanel extends JPanel {
             for (int i = 0; i < 10; i++) {
                 if (i < manoGiocatore.size()) {
                     Carta carta = manoGiocatore.get(i);
-                    bottoniCarte[i].setIcon(carta.getImmagine());
+                    java.awt.image.BufferedImage img = CardImageLoader.load(carta.getRisorsaNome());
+                    if (img != null) bottoniCarte[i].setIcon(new javax.swing.ImageIcon(img));
+                    else bottoniCarte[i].setIcon(null);
                     bottoniCarte[i].setText("");
                     bottoniCarte[i].setVisible(true);
                 } else {

@@ -23,13 +23,13 @@ JTresette! è un'implementazione del classico gioco di carte italiano Tresette p
 - Java 17 o superiore
 - Maven 3.6 o superiore
 
-### Esecuzione
+# Esecuzione
 ```bash
 # Compila il progetto
 mvn compile
 
-# Esegui il gioco
-mvn exec:java -Dexec.mainClass="it.uniroma1.tresette.MenuIniziale"
+# Esegui il gioco (entrypoint corretto)
+mvn exec:java -Dexec.mainClass="it.uniroma1.tresette.view.windows.Tresette"
 
 # Oppure compila e crea JAR
 mvn package
@@ -58,7 +58,8 @@ Il progetto utilizza diversi pattern di design:
 ### Componenti Principali
 
 - `TresetteGame`: Classe principale del gioco
-- `MenuIniziale`: Menu di avvio e configurazione
+- `it.uniroma1.tresette.view.windows.Tresette`: Entrypoint GUI e finestra principale
+- `MenuIniziale`: Menu di avvio e configurazione (finestra interna)
 - `StatisticheGiocatore`: Gestione persistente delle statistiche
 - `GameStateObserver`: Sistema di notifiche eventi
 - `AudioObserver`: Gestione effetti sonori

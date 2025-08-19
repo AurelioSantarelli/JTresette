@@ -3,6 +3,7 @@ package it.uniroma1.tresette.view.panels;
 import it.uniroma1.tresette.controller.GameController;
 import it.uniroma1.tresette.model.Carta;
 import it.uniroma1.tresette.view.utils.PaletteColori;
+import it.uniroma1.tresette.view.icons.CardImageLoader;
 
 import javax.swing.*;
 import java.awt.*;
@@ -118,7 +119,9 @@ public class PlayedCardsPanel extends JPanel {
                     Carta carta = gameController.getCartaPerPosizione(giocatore);
                     
                     if (carta != null) {
-                        labelCarteGiocate[giocatore].setIcon(carta.getImmagine());
+                        java.awt.image.BufferedImage img = CardImageLoader.load(carta.getRisorsaNome());
+                        if (img != null) labelCarteGiocate[giocatore].setIcon(new javax.swing.ImageIcon(img));
+                        else labelCarteGiocate[giocatore].setIcon(null);
                         labelCarteGiocate[giocatore].setText("");
                     } else {
                         labelCarteGiocate[giocatore].setIcon(null);
@@ -134,7 +137,9 @@ public class PlayedCardsPanel extends JPanel {
                     Carta carta = gameController.getCartaPerPosizione(giocatore);
                     
                     if (carta != null) {
-                        labelCarteGiocate[riquadroUI].setIcon(carta.getImmagine());
+                        java.awt.image.BufferedImage img = CardImageLoader.load(carta.getRisorsaNome());
+                        if (img != null) labelCarteGiocate[riquadroUI].setIcon(new javax.swing.ImageIcon(img));
+                        else labelCarteGiocate[riquadroUI].setIcon(null);
                         labelCarteGiocate[riquadroUI].setText("");
                     } else {
                         labelCarteGiocate[riquadroUI].setIcon(null);
