@@ -129,15 +129,6 @@ public class MenuIniziale extends JFrame {
         pannelloInferiore.setLayout(new BoxLayout(pannelloInferiore, BoxLayout.Y_AXIS));
         pannelloInferiore.setBorder(BorderFactory.createEmptyBorder(20, 50, 120, 50)); // Aumentato da 50 a 120
         
-        /* // Sottotitolo
-        JLabel sottotitolo = new JLabel("Il tradizionale gioco di carte italiano", SwingConstants.CENTER);
-        sottotitolo.setFont(new Font("Arial", Font.ITALIC, 18));
-        sottotitolo.setForeground(Color.WHITE);
-        sottotitolo.setOpaque(true);
-        sottotitolo.setBackground(new Color(0, 0, 0, 100));
-        sottotitolo.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        sottotitolo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        pannelloInferiore.add(sottotitolo); */
         
         pannelloInferiore.add(Box.createVerticalStrut(15)); // Spazio
 

@@ -1,15 +1,15 @@
-# JTresette! 🃏
+# JTresette! 
 
 Un gioco di Tresette implementato in Java con interfaccia grafica Swing.
 
-## 📋 Descrizione
+## Descrizione
 
-JTresette! è un'implementazione del classico gioco di carte italiano Tresette per 4 giocatori. Il gioco presenta un'interfaccia grafica intuitiva, effetti sonori e un sistema di statistiche per tracciare le partite.
+JTresette! è un'implementazione del classico gioco di carte italiano Tresette per 2/4 giocatori. Il gioco presenta un'interfaccia grafica intuitiva, effetti sonori e un sistema di statistiche per tracciare le partite.
 
-## ✨ Caratteristiche
+## Caratteristiche
 
 - **Interfaccia Grafica**: GUI moderna realizzata con Java Swing
-- **Gioco per 4 Giocatori**: Tu vs 3 AI con nomi italiani classici (Marcovaldo, Viligelmo, Astolfo)
+- **Gioco per 2/4 Giocatori**: Tu vs 3 AI oppure Tu vs 1 AI con nomi italiani classici (Marcovaldo, Viligelmo, Astolfo)
 - **Sistema Audio**: Effetti sonori per migliorare l'esperienza di gioco
 - **Statistiche Giocatore**: Tracciamento automatico di vittorie, sconfitte e percentuali
 - **Pattern Observer**: Architettura modulare con sistema di eventi
@@ -17,7 +17,7 @@ JTresette! è un'implementazione del classico gioco di carte italiano Tresette p
 - **Punteggio Personalizzabile**: Configurazione del punteggio di vittoria
 - **Log di Gioco**: Sistema di logging dettagliato degli eventi
 
-## 🚀 Come Eseguire
+## Come Eseguire
 
 ### Prerequisiti
 - Java 17 o superiore
@@ -36,7 +36,7 @@ mvn package
 java -jar target/tresette_2-1.0-SNAPSHOT.jar
 ```
 
-## 🎮 Come Giocare
+## Come Giocare
 
 1. **Avvio**: Inserisci il tuo nome e seleziona il punteggio di vittoria (default 41 punti)
 2. **Obiettivo**: Raggiungere per primi il punteggio di vittoria insieme al tuo partner (Viligelmo)
@@ -47,7 +47,7 @@ java -jar target/tresette_2-1.0-SNAPSHOT.jar
    - "Nuova Partita" per ricominciare
    - "Interrompi Partita" per tornare al menu
 
-## 🏗️ Architettura
+## Architettura
 
 Il progetto utilizza diversi pattern di design:
 
@@ -64,7 +64,7 @@ Il progetto utilizza diversi pattern di design:
 - `AudioObserver`: Gestione effetti sonori
 - `PaletteColori`: Tema colori dell'interfaccia
 
-## 📊 Sistema di Statistiche
+## Sistema di Statistiche
 
 Le statistiche dei giocatori vengono salvate automaticamente in file `.properties` nella directory `player_stats/`:
 - Partite giocate
@@ -72,13 +72,13 @@ Le statistiche dei giocatori vengono salvate automaticamente in file `.propertie
 - Partite perse  
 - Percentuale di vittorie
 
-## 🎨 Personalizzazione
+## Personalizzazione
 
 - **Colori**: Modifica `PaletteColori.java` per cambiare il tema
 - **Suoni**: Sostituisci i file audio in `src/main/resources/sounds/`
 - **Immagini**: Aggiorna le carte in `src/main/resources/images/`
 
-## 🛠️ Sviluppo
+##  Sviluppo
 
 ### Struttura del Progetto
 ```
@@ -105,13 +105,12 @@ src/main/resources/
 2. **Nuovi Suoni**: Aggiungi file WAV in `resources/sounds/`
 3. **Nuove Statistiche**: Estendi `StatisticheGiocatore`
 
-## 📝 Cronologia Versioni
+##  Cronologia Versioni
 
 - **v1.0**: Versione base con Observer pattern e statistiche
-- **Pre-MVC**: Implementazione MVC temporanea (rimossa)
 - **Observer Implementation**: Sistema completo di notifiche eventi
 
-## 🤝 Contributi
+##  Contributi
 
 Questo è un progetto educativo. Le modifiche sono benvenute per:
 - Miglioramenti all'interfaccia utente
@@ -119,11 +118,11 @@ Questo è un progetto educativo. Le modifiche sono benvenute per:
 - Nuove funzionalità di gioco
 - Correzioni di bug
 
-## 📜 Licenza
+## Licenza
 
 Progetto educativo - Università di Roma "La Sapienza"
 
-## 🙏 Crediti
+##  Crediti
 
 - **Sviluppo**: Implementazione Java/Swing
 - **Design Pattern**: Observer, Strategy
