@@ -2,7 +2,6 @@ package it.uniroma1.tresette.model;
 
 /**
  * Rappresenta una carta del gioco del Tresette.
- * Modello puro: non contiene codice di rendering o caricamento immagini.
  */
 public class Carta {
     // Nuove dimensioni per le carte (usate dalla view/loader)
@@ -15,7 +14,6 @@ public class Carta {
     private final int punti;
     // nome della risorsa immagine (es. "spade_1.png")
     private final String risorsaNome;
-    private static final String CARTA_RETRO_RESOURCE = "retro.png";
 
     public Carta(int valore, Seme seme) {
         this.valore = valore;
@@ -91,12 +89,6 @@ public class Carta {
         return risorsaNome;
     }
 
-    /**
-     * Resource name for the back of the card.
-     */
-    public static String getRetroResourceName() {
-        return CARTA_RETRO_RESOURCE;
-    }
 
     public int getForzaPerPresa() {
         switch (valore) {

@@ -4,7 +4,7 @@ Un gioco di Tresette implementato in Java con interfaccia grafica Swing.
 
 ## Descrizione
 
-JTresette! è un'implementazione del classico gioco di carte italiano Tresette per 2/4 giocatori. Il gioco presenta un'interfaccia grafica intuitiva, effetti sonori e un sistema di statistiche per tracciare le partite.
+JTresette! è un'implementazione del gioco di carte Tresette per 2/4 giocatori. Il gioco presenta un'interfaccia grafica intuitiva, effetti sonori e un sistema di statistiche per tracciare le partite.
 
 ## Caratteristiche
 
@@ -52,12 +52,12 @@ java -jar target/tresette_2-1.0-SNAPSHOT.jar
 Il progetto utilizza diversi pattern di design:
 
 - **Observer Pattern**: Per la gestione degli eventi di gioco
-- **MVC Elements**: Separazione logica tra presentazione e business logic
-- **Strategy Pattern**: Per l'AI dei giocatori automatici
+- **MVC**: Separazione logica tra presentazione e business logic
+
 
 ### Componenti Principali
 
-- `TresetteGame`: Classe principale del gioco
+- `Tresette`: Classe principale del gioco
 - `MenuIniziale`: Menu di avvio e configurazione
 - `StatisticheGiocatore`: Gestione persistente delle statistiche
 - `GameStateObserver`: Sistema di notifiche eventi
@@ -83,7 +83,7 @@ Le statistiche dei giocatori vengono salvate automaticamente in file `.propertie
 ### Struttura del Progetto
 ```
 src/main/java/it/uniroma1/tresette/
-├── TresetteGame.java          # Gioco principale
+├── Tresette.java          # Gioco principale
 ├── MenuIniziale.java          # Menu di avvio
 ├── StatisticheGiocatore.java  # Gestione statistiche
 ├── PaletteColori.java         # Tema colori
