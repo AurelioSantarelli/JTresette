@@ -30,7 +30,6 @@ public class Tresette extends JFrame implements GameController.GameView {
     private final GameStateObservable gameObservable;
     private final AudioObserver audioObserver;
     private final LoggingObserver loggingObserver;
-    private final DebugObserver debugObserver;
     
     // Configurazione
     private final double PUNTEGGIO_VITTORIA;
@@ -67,8 +66,7 @@ public class Tresette extends JFrame implements GameController.GameView {
         gameObservable = new GameStateObservable();
         audioObserver = new AudioObserver(true); // Audio abilitato di default
         loggingObserver = new LoggingObserver(this::log);
-        debugObserver = new DebugObserver(false); // Debug disabilitato
-        
+       
         // Configura il logging
         loggingObserver.setLoggingEnabled(true);
         loggingObserver.setLoggingDettagliato(false);
@@ -209,17 +207,6 @@ public class Tresette extends JFrame implements GameController.GameView {
         loggingObserver.setLoggingEnabled(abilitato);
     }
     
-    public void setDebugMode(boolean abilitato) {
-        debugObserver.setDebugAbilitato(abilitato);
-    }
-    
-    public boolean isDebugMode() {
-        return debugObserver.isDebugAbilitato();
-    }
-    
-    public void resetDebugStats() {
-        debugObserver.resetStats();
-    }
 
     // =================== MAIN METHOD ===================
     

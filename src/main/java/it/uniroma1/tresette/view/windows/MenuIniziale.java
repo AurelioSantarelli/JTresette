@@ -10,6 +10,9 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 
+/**
+ * Menu principale del gioco Tresette 
+ */
 public class MenuIniziale extends JFrame {
 
     private BufferedImage sfondoImmagine;
@@ -371,7 +374,7 @@ public class MenuIniziale extends JFrame {
         boolean modalitaDueGiocatori = comboModalita.getSelectedIndex() == 1;
         
         dispose();
-        SwingUtilities.invokeLater(() -> new TresetteGame(nomeGiocatore, punteggioVittoria, modalitaDueGiocatori).setVisible(true));
+        SwingUtilities.invokeLater(() -> new Tresette(nomeGiocatore, punteggioVittoria, modalitaDueGiocatori).setVisible(true));
     }
     
     private void mostraStatistiche() {
@@ -663,14 +666,4 @@ public class MenuIniziale extends JFrame {
         return new ImageIcon(img);
     }
     
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            new MenuIniziale().setVisible(true);
-        });
-    }
 }
