@@ -5,7 +5,9 @@ package it.uniroma1.tresette.model;
  */
 public class Carta {
     // Nuove dimensioni per le carte (usate dalla view/loader)
+    /** Larghezza standard della carta in pixel */
     public static final int LARGHEZZA_CARTA = 105;
+    /** Altezza standard della carta in pixel */
     public static final int ALTEZZA_CARTA = 142;
 
     private final int valore; // 1-10
@@ -15,6 +17,12 @@ public class Carta {
     // nome della risorsa immagine (es. "spade_1.png")
     private final String risorsaNome;
 
+    /**
+     * Costruttore per creare una carta con seme e valore specificati
+     * 
+     * @param valore valore della carta (1-10)
+     * @param seme seme della carta
+     */
     public Carta(int valore, Seme seme) {
         this.valore = valore;
         this.seme = seme;
@@ -65,31 +73,38 @@ public class Carta {
         this.risorsaNome = String.format("%s_%d.png", seme.name().toLowerCase(), valore);
     }
 
+    /** @return valore numerico della carta (1-10) */
     public int getValore() {
         return valore;
     }
 
+    /** @return seme della carta */
     public Seme getSeme() {
         return seme;
     }
 
+    /** @return nome simbolico della carta (A, 2-7, F, C, R) */
     public String getNome() {
         return nome;
     }
 
+    /** @return punti assegnati alla carta per il calcolo del punteggio */
     public int getPunti() {
         return punti;
     }
 
     /**
-     * Nome della risorsa immagine associata a questa carta (es. "spade_1.png").
-     * La view si occupa di caricare l'immagine tramite CardImageLoader.
+     * Restituisce il nome della risorsa immagine per questa carta
+     * @return nome file della risorsa (es. "spade_1.png")
      */
     public String getRisorsaNome() {
         return risorsaNome;
     }
 
-
+    /**
+     * Restituisce la forza della carta per determinare chi prende la mano
+     * @return valore numerico per il confronto tra carte
+     */
     public int getForzaPerPresa() {
         switch (valore) {
             case 3:

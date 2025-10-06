@@ -24,6 +24,11 @@ public final class CardImageLoader {
 
     private CardImageLoader() {}
 
+    /**
+     * Carica un'immagine di carta dal path delle risorse con cache
+     * @param resourceName nome della risorsa (es. "spade_1.png")  
+     * @return immagine scalata e ottimizzata, null se non trovata
+     */
     public static BufferedImage load(String resourceName) {
         if (resourceName == null) return null;
         return CACHE.computeIfAbsent(resourceName, key -> {

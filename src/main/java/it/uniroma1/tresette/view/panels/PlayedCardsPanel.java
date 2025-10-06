@@ -19,6 +19,10 @@ public class PlayedCardsPanel extends JPanel {
     private final GameController gameController;
     private final int numeroGiocatori;
     
+    /**
+     * Costruisce il pannello delle carte giocate  
+     * @param gameController controller del gioco per accedere ai dati
+     */
     public PlayedCardsPanel(GameController gameController) {
         this.gameController = gameController;
         this.numeroGiocatori = gameController.getNumeroGiocatori();

@@ -129,53 +129,5 @@ public class SoundManager {
         }
     }
 
-    /**
-     * Crea un suono di click sintetico se il file audio non è disponibile
-     */
-    public static void riproduciClickSintetico() {
-        try {
-            AudioFormat format = new AudioFormat(44100, 8, 1, true, false);
-            DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
-            SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
-            line.open(format);
-            line.start();
-
-            // Genera un breve beep
-            byte[] buffer = new byte[1000];
-            for (int i = 0; i < buffer.length; i++) {
-                buffer[i] = (byte) (Math.sin(i * 2 * Math.PI / 10) * 127);
-            }
-
-            line.write(buffer, 0, buffer.length);
-            line.drain();
-            line.close();
-        } catch (LineUnavailableException e) {
-            System.err.println("Impossibile riprodurre il suono sintetico: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Crea un suono sintetico generico
-     */
-    public static void riproduciSuonoSintetico() {
-        try {
-            AudioFormat format = new AudioFormat(44100, 8, 1, true, false);
-            DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
-            SourceDataLine line = (SourceDataLine) AudioSystem.getLine(info);
-            line.open(format);
-            line.start();
-
-            // Genera un tono più lungo
-            byte[] buffer = new byte[4000];
-            for (int i = 0; i < buffer.length; i++) {
-                buffer[i] = (byte) (Math.sin(i * 2 * Math.PI / 20) * 100);
-            }
-
-            line.write(buffer, 0, buffer.length);
-            line.drain();
-            line.close();
-        } catch (LineUnavailableException e) {
-            System.err.println("Impossibile riprodurre il suono sintetico: " + e.getMessage());
-        }
-    }
+    
 }

@@ -19,6 +19,10 @@ public class PlayerCardsPanel extends JPanel {
     private final JButton[] bottoniCarte;
     private final GameController gameController;
     
+    /**
+     * Costruisce il pannello delle carte del giocatore
+     * @param gameController controller del gioco per gestire le azioni
+     */
     public PlayerCardsPanel(GameController gameController) {
         super(new FlowLayout(FlowLayout.CENTER, 10, 10));
         this.gameController = gameController;

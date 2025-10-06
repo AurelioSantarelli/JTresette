@@ -5,6 +5,7 @@ import it.uniroma1.tresette.view.icons.IconFactory;
 import it.uniroma1.tresette.view.layout.GameLayoutManager;
 import it.uniroma1.tresette.view.panels.*;
 import it.uniroma1.tresette.controller.GameController;
+import it.uniroma1.tresette.controller.GameView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +15,7 @@ import java.awt.*;
  * Completamente modulare - delega la gestione UI ai pannelli specializzati.
  * La logica di gioco è delegata al GameController.
  */
-public class Tresette extends JFrame implements GameController.GameView {
+public class Tresette extends JFrame implements GameView {
 
     // Pannelli modulari specializzati
     private final TopGamePanel topPanel;

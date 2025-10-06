@@ -13,6 +13,11 @@ public class GameLayoutManager {
     
     private final JFrame parentFrame;
     
+    /**
+     * Costruttore del gestore del layout
+     * 
+     * @param parentFrame finestra principale del gioco
+     */
     public GameLayoutManager(JFrame parentFrame) {
         this.parentFrame = parentFrame;
     }

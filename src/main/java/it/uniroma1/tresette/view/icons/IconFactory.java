@@ -12,6 +12,9 @@ import java.io.IOException;
  * Factory per la creazione di icone personalizzate del gioco.
  * Gestisce il caricamento delle icone dalle risorse e la creazione di icone di fallback.
  */
+/**
+ * Factory per la creazione e gestione delle icone utilizzate nell'applicazione
+ */
 public class IconFactory {
 
     /**

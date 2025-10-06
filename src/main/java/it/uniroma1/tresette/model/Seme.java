@@ -1,29 +1,27 @@
 package it.uniroma1.tresette.model;
 
-import java.awt.Color;
 
 /**
  * Enum che rappresenta i semi delle carte del Tresette.
  */
 public enum Seme {
-    COPPE("[coppe]", Color.RED), 
-    DENARI("[denari]", Color.RED),
-    SPADE("[spade]", Color.BLACK), 
-    BASTONI("[bastoni]", Color.BLACK);
+    /** Seme delle coppe (rosso) */
+    COPPE("[coppe]"), 
+    /** Seme dei denari (rosso) */
+    DENARI("[denari]"),
+    /** Seme delle spade (nero) */
+    SPADE("[spade]"), 
+    /** Seme dei bastoni (nero) */
+    BASTONI("[bastoni]");
 
     private final String simbolo;
-    private final Color colore;
 
-    Seme(String simbolo, Color colore) {
+    Seme(String simbolo) {
         this.simbolo = simbolo;
-        this.colore = colore;
     }
 
+    /** @return simbolo testuale del seme */
     public String getSimbolo() {
         return simbolo;
-    }
-
-    public Color getColore() {
-        return colore;
     }
 }

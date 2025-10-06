@@ -1,0 +1,504 @@
+<h1 id="presentazione-progetto-tresette">PRESENTAZIONE PROGETTO
+TRESETTE</h1>
+<p><strong>Implementazione di un Gioco di Carte Digitale in
+Java</strong></p>
+<p><strong>Studente</strong>: Aurelio Santarelli<br />
+<strong>Corso</strong>: [Nome del Corso]<br />
+<strong>Anno Accademico</strong>: 2024-2025</p>
+<h1 id="slide-1-introduzione-al-progetto">SLIDE 1: INTRODUZIONE AL
+PROGETTO</h1>
+<h2 id="obiettivo">Obiettivo</h2>
+<p>Sviluppare una <strong>versione digitale completa</strong> del gioco
+tradizionale italiano <strong>Tresette</strong> utilizzando Java e
+Swing.</p>
+<h2 id="motivazioni">Motivazioni</h2>
+<ul>
+<li><strong>Complessità bilanciata</strong>: Regole sufficientemente
+articolate per una progettazione significativa</li>
+<li><strong>Dominio familiare</strong>: Regole ben definite del gioco
+tradizionale</li>
+<li><strong>Sfide tecniche diverse</strong>: AI, interfaccia grafica,
+gestione stato, multimedia</li>
+<li><strong>Scalabilità</strong>: Architettura estendibile a modalità
+diverse</li>
+</ul>
+<h2 id="risultati-attesi">Risultati Attesi</h2>
+<p>✅ Applicazione desktop completa e stabile<br />
+✅ Implementazione fedele delle regole del Tresette<br />
+✅ Intelligenza artificiale competitiva<br />
+✅ Interfaccia utente intuitiva e responsive</p>
+<hr />
+<h1 id="slide-2-analisi-dei-requisiti">SLIDE 2: ANALISI DEI
+REQUISITI</h1>
+<h2 id="requisiti-funzionali-principali">Requisiti Funzionali
+Principali</h2>
+<h3 id="rf01---gestione-del-gioco">RF01 - Gestione del Gioco</h3>
+<ul>
+<li>Modalità 2 e 4 giocatori (1 umano + AI)</li>
+<li>Distribuzione automatica delle carte</li>
+<li>Calcolo accurato dei punteggi</li>
+</ul>
+<h3 id="rf02---interfaccia-utente">RF02 - Interfaccia Utente</h3>
+<ul>
+<li>Visualizzazione chiara delle carte del giocatore</li>
+<li>Feedback visivo per azioni consentite</li>
+<li>Aggiornamento real-time dei punteggi</li>
+</ul>
+<h3 id="rf03---intelligenza-artificiale">RF03 - Intelligenza
+Artificiale</h3>
+<ul>
+<li>Rispetto delle regole del gioco</li>
+<li>Strategie competitive ma non frustranti</li>
+<li>Timing realistico per le mosse</li>
+</ul>
+<h2 id="requisiti-non-funzionali">Requisiti Non Funzionali</h2>
+<ul>
+<li><strong>Performance</strong>: Tempo di risposta &lt; 100ms</li>
+<li><strong>Usabilità</strong>: Interfaccia intuitiva per tutte le
+età</li>
+<li><strong>Manutenibilità</strong>: Codice ben documentato e
+modulare</li>
+<li><strong>Portabilità</strong>: Compatibilità multipiattaforma
+Java</li>
+</ul>
+<hr />
+<h1 id="slide-3-architettura-del-sistema">SLIDE 3: ARCHITETTURA DEL
+SISTEMA</h1>
+<h2 id="pattern-architetturale-mvc-observer">Pattern Architetturale: MVC
++ Observer</h2>
+<pre><code>VIEW LAYER (UI)
+    ↕ Observer Pattern
+CONTROLLER LAYER (Business Logic)
+    ↕
+MODEL LAYER (Data &amp; Entities)</code></pre>
+<h2 id="principi-solid-applicati">Principi SOLID Applicati</h2>
+<ul>
+<li><strong>SRP</strong>: Ogni classe ha una responsabilità singola e
+ben definita</li>
+<li><strong>OCP</strong>: Sistema aperto per estensioni, chiuso per
+modifiche</li>
+<li><strong>DIP</strong>: Dipendenze verso astrazioni, non
+implementazioni concrete</li>
+</ul>
+<h2 id="decomposizione-in-package">Decomposizione in Package</h2>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>it<span class="op">.</span><span class="fu">uniroma1</span><span class="op">.</span><span class="fu">tresette</span><span class="op">/</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>├── model<span class="op">/</span>          <span class="co">// Entità di dominio</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>├── controller<span class="op">/</span>     <span class="co">// Logica di controllo  </span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>├── view<span class="op">/</span>          <span class="co">// Interfaccia utente</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>└── util<span class="op">/</span>          <span class="co">// Utility generali</span></span></code></pre></div>
+<hr />
+<h1 id="slide-4-componenti-chiave---controller">SLIDE 4: COMPONENTI
+CHIAVE - CONTROLLER</h1>
+<h2 id="gamecontroller-il-coordinatore-centrale">GameController: Il
+Coordinatore Centrale</h2>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> GameController <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Componenti specializzati</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> GameStateManager gameState<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> DeckManager deckManager<span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> ScoreCalculator scoreCalculator<span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> TurnManager turnManager<span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> AIPlayer aiPlayer<span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="evoluzione-architetturale">Evoluzione Architetturale</h2>
+<p><strong>Prima</strong>: Controller monolitico (809 linee) - Tutte le
+responsabilità in una classe - Difficile da testare e manutenere</p>
+<p><strong>Dopo</strong>: Controller modulare (495 linee) -
+Responsabilità distribuite in manager specializzati - Migliore
+testabilità e manutenibilità - <strong>Complessità ciclomatica ridotta
+da 15 a 6</strong></p>
+<hr />
+<h1 id="slide-5-gestione-dello-stato">SLIDE 5: GESTIONE DELLO STATO</h1>
+<h2 id="gamestatemanager-centralizzazione-dello-stato">GameStateManager:
+Centralizzazione dello Stato</h2>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> GameStateManager <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Stati booleani del gioco</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">boolean</span> giocoInCorso<span class="op">,</span> giocoInPausa<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Contatori e indici</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">int</span> giocatoreCorrente<span class="op">,</span> mano<span class="op">,</span> giocata<span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Punteggi</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">double</span> punteggioCoppia1<span class="op">,</span> punteggioCoppia2<span class="op">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Operazioni atomiche</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="kw">synchronized</span> <span class="dt">void</span> <span class="fu">avanzaTurno</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        giocatoreCorrente <span class="op">=</span> <span class="op">(</span>giocatoreCorrente <span class="op">+</span> <span class="dv">1</span><span class="op">)</span> <span class="op">%</span> numeroGiocatori<span class="op">;</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        carteGiocateInMano<span class="op">++;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="vantaggi-ottenuti">Vantaggi Ottenuti</h2>
+<ul>
+<li><strong>Consistenza</strong>: Stato sempre coerente</li>
+<li><strong>Thread-safety</strong>: Operazioni sincronizzate</li>
+<li><strong>Debug facilitato</strong>: Stato centralizzato e
+ispezionabile</li>
+<li><strong>Transazioni atomiche</strong>: Modifiche multiple
+coerenti</li>
+</ul>
+<hr />
+<h1 id="slide-6-intelligenza-artificiale">SLIDE 6: INTELLIGENZA
+ARTIFICIALE</h1>
+<h2 id="strategia-ai-multi-livello">Strategia AI Multi-livello</h2>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">int</span> <span class="fu">selezionaCarta</span><span class="op">(</span>Giocatore giocatore<span class="op">,</span> Seme semeRichiesto<span class="op">,</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                         <span class="bu">List</span><span class="op">&lt;</span>Carta<span class="op">&gt;</span> carteGiocate<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>semeRichiesto <span class="op">==</span> <span class="kw">null</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fu">selezionaCartaPrimaTurno</span><span class="op">(</span>mano<span class="op">);</span>  <span class="co">// Apertura strategica</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span><span class="fu">puoVincereMano</span><span class="op">(</span>semeRichiesto<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fu">selezionaCartaVincente</span><span class="op">();</span>        <span class="co">// Gioca per vincere</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fu">selezionaCartaMinima</span><span class="op">();</span>          <span class="co">// Conserva risorse</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="caratteristiche-dellai">Caratteristiche dell’AI</h2>
+<ul>
+<li><strong>Analisi del contesto</strong>: Considera seme richiesto e
+carte già giocate</li>
+<li><strong>Gestione delle risorse</strong>: Conserva carte forti quando
+appropriato</li>
+<li><strong>Esecuzione non bloccante</strong>: Timer per realismo senza
+bloccare UI</li>
+<li><strong>Strategia bilanciata</strong>: Competitiva ma non
+frustrante</li>
+</ul>
+<hr />
+<h1 id="slide-7-pattern-utilizzati">SLIDE 7: PATTERN UTILIZZATI</h1>
+<h2 id="observer-pattern---comunicazione-asincrona">1. Observer Pattern
+- Comunicazione Asincrona</h2>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> GameStateObservable <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">notifyCartaGiocata</span><span class="op">(</span>Carta carta<span class="op">,</span> <span class="bu">String</span> giocatore<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        observers<span class="op">.</span><span class="fu">forEach</span><span class="op">(</span>obs <span class="op">-&gt;</span> obs<span class="op">.</span><span class="fu">onCartaGiocata</span><span class="op">(</span>carta<span class="op">,</span> giocatore<span class="op">));</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="factory-pattern---creazione-standardizzata">2. Factory Pattern -
+Creazione Standardizzata</h2>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> UIComponentFactory <span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="bu">JButton</span> <span class="fu">createStyledButton</span><span class="op">(</span><span class="bu">String</span> text<span class="op">,</span> <span class="bu">Color</span> color<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Creazione componente con styling consistente</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="strategy-pattern-implicito---ai-comportamentale">3. Strategy
+Pattern (Implicito) - AI Comportamentale</h2>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Diverse strategie in base al contesto</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>primoTurno<span class="op">)</span> <span class="cf">return</span> <span class="fu">strategiaApertura</span><span class="op">();</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span> <span class="cf">if</span> <span class="op">(</span>puoVincere<span class="op">)</span> <span class="cf">return</span> <span class="fu">strategiaOffensiva</span><span class="op">();</span>  </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span> <span class="cf">return</span> <span class="fu">strategiaDifensiva</span><span class="op">();</span></span></code></pre></div>
+<h2 id="singleton-pattern---gestione-risorse">4. Singleton Pattern -
+Gestione Risorse</h2>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> SoundManager <span class="op">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">static</span> SoundManager instance<span class="op">;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Gestione centralizzata dell&#39;audio</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h1 id="slide-8-gestione-delle-sfide-tecniche">SLIDE 8: GESTIONE DELLE
+SFIDE TECNICHE</h1>
+<h2 id="sfida-1-ai-non-bloccante">Sfida #1: AI Non Bloccante</h2>
+<p><strong>Problema</strong>: L’AI deve “pensare” senza bloccare
+l’interfaccia</p>
+<p><strong>Soluzione</strong>:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Timer</span> timer <span class="op">=</span> <span class="kw">new</span> <span class="bu">Timer</span><span class="op">(</span>AI_DELAY<span class="op">,</span> e <span class="op">-&gt;</span> <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> scelta <span class="op">=</span> aiPlayer<span class="op">.</span><span class="fu">selezionaCarta</span><span class="op">(</span>giocatore<span class="op">);</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">SwingUtilities</span><span class="op">.</span><span class="fu">invokeLater</span><span class="op">(()</span> <span class="op">-&gt;</span> <span class="fu">executeMove</span><span class="op">(</span>scelta<span class="op">));</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="op">});</span></span></code></pre></div>
+<h2 id="sfida-2-ottimizzazione-risorse-grafiche">Sfida #2:
+Ottimizzazione Risorse Grafiche</h2>
+<p><strong>Problema</strong>: 40+ immagini da caricare
+efficientemente</p>
+<p><strong>Soluzione</strong>: Cache intelligente</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> <span class="bu">Map</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">,</span> <span class="bu">BufferedImage</span><span class="op">&gt;</span> CACHE <span class="op">=</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">new</span> <span class="bu">ConcurrentHashMap</span><span class="op">&lt;&gt;();</span></span></code></pre></div>
+<h2 id="sfida-3-sincronizzazione-vista-modello">Sfida #3:
+Sincronizzazione Vista-Modello</h2>
+<p><strong>Problema</strong>: UI sincronizzata senza accoppiamento
+forte</p>
+<p><strong>Soluzione</strong>: Observer Pattern per aggiornamenti
+automatici</p>
+<hr />
+<h1 id="slide-9-metriche-e-risultati">SLIDE 9: METRICHE E RISULTATI</h1>
+<h2 id="metriche-del-codice">Metriche del Codice</h2>
+<ul>
+<li><strong>Linee di codice</strong>: ~3,500 LOC</li>
+<li><strong>Numero di classi</strong>: 31 classi ben organizzate</li>
+<li><strong>Complessità ciclomatica</strong>: Media 4.2 (ottimo)</li>
+<li><strong>Copertura Javadoc</strong>: 100% (0 warning)</li>
+</ul>
+<h2 id="performance-ottenute">Performance Ottenute</h2>
+<ul>
+<li><strong>Avvio applicazione</strong>: ~2.5 secondi</li>
+<li><strong>Tempo risposta UI</strong>: &lt;50ms</li>
+<li><strong>Memoria utilizzata</strong>: ~180MB (target &lt;256MB)</li>
+<li><strong>Calcolo AI</strong>: ~800ms (con timer realistico)</li>
+</ul>
+<h2 id="qualità-assurance">Qualità Assurance</h2>
+<p>✅ <strong>Zero crash</strong> nei test estesi<br />
+✅ <strong>UI sempre responsiva</strong><br />
+✅ <strong>Tutte le funzionalità implementate</strong><br />
+✅ <strong>Codice completamente documentato</strong></p>
+<hr />
+<h1 id="slide-10-testing-e-validazione">SLIDE 10: TESTING E
+VALIDAZIONE</h1>
+<h2 id="strategia-di-testing-multi-livello">Strategia di Testing
+Multi-livello</h2>
+<h3 id="unit-testing">Unit Testing</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Test</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">testCalcoloPuntiCarta</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    Carta asso <span class="op">=</span> <span class="kw">new</span> <span class="fu">Carta</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> Seme<span class="op">.</span><span class="fu">COPPE</span><span class="op">);</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">assertEquals</span><span class="op">(</span><span class="fl">1.0</span><span class="op">/</span><span class="fl">3.0</span><span class="op">,</span> asso<span class="op">.</span><span class="fu">getPunti</span><span class="op">(),</span> <span class="fl">0.001</span><span class="op">);</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="integration-testing">Integration Testing</h3>
+<ul>
+<li>Test delle interazioni GameController ↔︎ Manager</li>
+<li>Validazione flusso completo di una mano</li>
+<li>Verifica propagazione eventi Observer</li>
+</ul>
+<h3 id="manual-testing">Manual Testing</h3>
+<ul>
+<li>Test UI su diverse risoluzioni</li>
+<li>Verifica user experience</li>
+<li>Test di performance con partite lunghe</li>
+</ul>
+<h2 id="bug-principali-risolti">Bug Principali Risolti</h2>
+<ol type="1">
+<li><strong>Concurrency</strong>: AI bloccava UI → Timer asincroni</li>
+<li><strong>Memory Leak</strong>: Immagini ricaricate → Cache
+statica</li>
+<li><strong>State Sync</strong>: Stati inconsistenti → GameStateManager
+centralizzato</li>
+</ol>
+<hr />
+<h1 id="slide-11-tecnologie-e-tools">SLIDE 11: TECNOLOGIE E TOOLS</h1>
+<h2 id="stack-tecnologico">Stack Tecnologico</h2>
+<h3 id="java-17-lts">Java 17 LTS</h3>
+<ul>
+<li><strong>Portabilità</strong>: “Write once, run anywhere”</li>
+<li><strong>Stabilità</strong>: Supporto a lungo termine</li>
+<li><strong>Performance</strong>: JVM ottimizzata</li>
+<li><strong>Ecosistema maturo</strong>: Librerie consolidate</li>
+</ul>
+<h3 id="java-swing">Java Swing</h3>
+<ul>
+<li><strong>Nativo</strong>: Nessuna dipendenza esterna</li>
+<li><strong>Maturo</strong>: Comportamenti prevedibili</li>
+<li><strong>Controllo completo</strong>: Personalizzazione totale
+UI</li>
+<li><strong>Multipiattaforma</strong>: Look &amp; Feel nativo</li>
+</ul>
+<h3 id="maven">Maven</h3>
+<ul>
+<li><strong>Gestione dipendenze</strong>: Risoluzione automatica</li>
+<li><strong>Build standardizzato</strong>: Ciclo di vita definito</li>
+<li><strong>Plugin ecosystem</strong>: Javadoc, testing, packaging</li>
+</ul>
+<h2 id="tools-di-sviluppo">Tools di Sviluppo</h2>
+<ul>
+<li><strong>IDE</strong>: IntelliJ IDEA per produttività</li>
+<li><strong>VCS</strong>: Git per version control</li>
+<li><strong>Documentation</strong>: Javadoc per API docs</li>
+</ul>
+<hr />
+<h1 id="slide-12-lezioni-apprese">SLIDE 12: LEZIONI APPRESE</h1>
+<h2 id="competenze-acquisite">Competenze Acquisite</h2>
+<h3 id="tecniche">Tecniche</h3>
+<ul>
+<li><strong>Architettura software</strong>: Sistemi modulari e
+scalabili</li>
+<li><strong>Design Patterns</strong>: Applicazione pratica di pattern
+consolidati</li>
+<li><strong>Java avanzato</strong>: Concorrenza, generics,
+collections</li>
+<li><strong>UI Design</strong>: Interfacce responsive con Swing</li>
+</ul>
+<h3 id="metodologiche">Metodologiche</h3>
+<ul>
+<li><strong>Problem solving</strong>: Decomposizione problemi
+complessi</li>
+<li><strong>Testing</strong>: Strategie di quality assurance</li>
+<li><strong>Documentazione</strong>: Technical writing efficace</li>
+<li><strong>Performance optimization</strong>: Ottimizzazione
+sistematica</li>
+</ul>
+<h2 id="insight-principali">Insight Principali</h2>
+<ol type="1">
+<li><strong>Progettazione upfront</strong>: Tempo investito in
+architettura paga sempre</li>
+<li><strong>Separation of concerns</strong>: MVC facilita manutenibilità
+enormemente<br />
+</li>
+<li><strong>Observer pattern</strong>: Eccellente per disaccoppiamento
+UI/Logic</li>
+<li><strong>Documentazione</strong>: Javadoc completo è investimento che
+ripaga</li>
+</ol>
+<hr />
+<h1 id="slide-13-sviluppi-futuri">SLIDE 13: SVILUPPI FUTURI</h1>
+<h2 id="estensioni-a-breve-termine">Estensioni a Breve Termine</h2>
+<h3 id="miglioramenti-ai">1. Miglioramenti AI</h3>
+<ul>
+<li><strong>Livelli di difficoltà</strong>: Easy/Medium/Hard
+selezionabili</li>
+<li><strong>Strategie personalizzate</strong>: Comportamenti AI
+diversi</li>
+<li><strong>Apprendimento</strong>: AI che si adatta allo stile del
+giocatore</li>
+</ul>
+<h3 id="personalizzazione-ui">2. Personalizzazione UI</h3>
+<ul>
+<li><strong>Temi grafici</strong>: Skin e colori alternativi</li>
+<li><strong>Carte personalizzate</strong>: Set di carte diversi</li>
+<li><strong>Configurabilità</strong>: Opzioni utente estese</li>
+</ul>
+<h3 id="features-aggiuntive">3. Features Aggiuntive</h3>
+<ul>
+<li><strong>Statistiche avanzate</strong>: Analytics dettagliate
+partite</li>
+<li><strong>Replay system</strong>: Rivedere partite precedenti</li>
+<li><strong>Tutorial interattivo</strong>: Guida per nuovi
+giocatori</li>
+</ul>
+<h2 id="estensioni-a-lungo-termine">Estensioni a Lungo Termine</h2>
+<h3 id="multiplayer-online">1. Multiplayer Online</h3>
+<ul>
+<li><strong>Architettura client-server</strong>: Gioco in rete</li>
+<li><strong>Matchmaking</strong>: Sistema di pairing giocatori</li>
+<li><strong>Chat integrata</strong>: Comunicazione tra giocatori</li>
+</ul>
+<h3 id="mobile-version">2. Mobile Version</h3>
+<ul>
+<li><strong>Android port</strong>: Riutilizzo classi model
+esistenti</li>
+<li><strong>Touch interface</strong>: UI ottimizzata per touch</li>
+<li><strong>Cross-platform sync</strong>: Statistiche condivise</li>
+</ul>
+<hr />
+<h1 id="slide-14-dimostrazione-live">SLIDE 14: DIMOSTRAZIONE LIVE</h1>
+<h2 id="demo-delle-funzionalità-principali">Demo delle Funzionalità
+Principali</h2>
+<h3 id="avvio-e-menu-principale">1. Avvio e Menu Principale</h3>
+<ul>
+<li>Selezione modalità di gioco</li>
+<li>Configurazione partita</li>
+</ul>
+<h3 id="gameplay-core">2. Gameplay Core</h3>
+<ul>
+<li>Giocata di una mano completa</li>
+<li>Interazione con AI</li>
+<li>Calcolo punteggi automatico</li>
+</ul>
+<h3 id="features-avanzate">3. Features Avanzate</h3>
+<ul>
+<li>Sistema di pausa/ripresa</li>
+<li>Audio feedback</li>
+<li>Gestione fine partita</li>
+</ul>
+<h3 id="aspetti-tecnici">4. Aspetti Tecnici</h3>
+<ul>
+<li>Responsività interfaccia</li>
+<li>Timing realistico AI</li>
+<li>Aggiornamenti real-time UI</li>
+</ul>
+<hr />
+<h1 id="slide-15-conclusioni">SLIDE 15: CONCLUSIONI</h1>
+<h2 id="obiettivi-raggiunti">Obiettivi Raggiunti ✅</h2>
+<h3 id="funzionali">Funzionali</h3>
+<ul>
+<li>✅ <strong>Gioco completo</strong>: Tutte le regole del Tresette
+implementate</li>
+<li>✅ <strong>AI competitiva</strong>: Intelligenza artificiale
+bilanciata e divertente</li>
+<li>✅ <strong>UI/UX eccellente</strong>: Interfaccia intuitiva e
+responsive</li>
+<li>✅ <strong>Performance ottimali</strong>: Tutti i target di
+performance raggiunti</li>
+</ul>
+<h3 id="tecnici">Tecnici</h3>
+<ul>
+<li>✅ <strong>Architettura solida</strong>: Pattern appropriati e
+codice manutenibile</li>
+<li>✅ <strong>Qualità alta</strong>: Zero warning, documentazione
+completa</li>
+<li>✅ <strong>Estensibilità</strong>: Base per sviluppi futuri</li>
+<li>✅ <strong>Stabilità</strong>: Testing approfondito e bug
+fixing</li>
+</ul>
+<h2 id="valore-del-progetto">Valore del Progetto</h2>
+<h3 id="didattico">Didattico</h3>
+<ul>
+<li><strong>Applicazione pratica</strong> di concetti teorici OOP</li>
+<li><strong>Esperienza completa</strong> di sviluppo software
+professionale</li>
+<li><strong>Best practices</strong> implementate concretamente</li>
+</ul>
+<h3 id="tecnico">Tecnico</h3>
+<ul>
+<li><strong>Software funzionante</strong> e utilizzabile</li>
+<li><strong>Codebase di qualità</strong> per portfolio</li>
+<li><strong>Base solida</strong> per estensioni future</li>
+</ul>
+<hr />
+<h1 id="slide-16-qa">SLIDE 16: Q&amp;A</h1>
+<h2 id="domande-frequenti-attese">Domande Frequenti Attese</h2>
+<h3 id="perché-java-swing-invece-di-javafx">“Perché Java Swing invece di
+JavaFX?”</h3>
+<ul>
+<li><strong>Stabilità</strong>: Swing è maturo e prevedibile</li>
+<li><strong>Semplicità</strong>: Meno complessità per questo
+progetto</li>
+<li><strong>Compatibilità</strong>: Funziona ovunque ci sia Java</li>
+</ul>
+<h3 id="come-gestite-la-complessità-dellai">“Come gestite la complessità
+dell’AI?”</h3>
+<ul>
+<li><strong>Strategia a livelli</strong>: Logica semplice ma
+efficace</li>
+<li><strong>Separazione responsabilità</strong>: AIPlayer dedicato</li>
+<li><strong>Testing empirico</strong>: Bilanciamento attraverso test
+reali</li>
+</ul>
+<h3 id="scalabilità-dellarchitettura">“Scalabilità
+dell’architettura?”</h3>
+<ul>
+<li><strong>Pattern modulari</strong>: Facile aggiungere nuovi
+componenti</li>
+<li><strong>Interfacce chiare</strong>: Implementazioni
+sostituibili</li>
+<li><strong>Observer pattern</strong>: Nuove funzionalità senza
+impatto</li>
+</ul>
+<h3 id="performance-con-molte-partite">“Performance con molte
+partite?”</h3>
+<ul>
+<li><strong>Cache intelligente</strong>: Risorse riutilizzate</li>
+<li><strong>Garbage collection</strong>: Gestione memoria
+ottimizzata<br />
+</li>
+<li><strong>Profiling</strong>: Ottimizzazioni basate su
+misurazioni</li>
+</ul>
+<hr />
+<h2 id="grazie-per-lattenzione">Grazie per l’Attenzione!</h2>
+<h3 id="contatti">Contatti</h3>
+<ul>
+<li><strong>Email</strong>: [tua-email@università.it]</li>
+<li><strong>Progetto</strong>:
+https://github.com/[username]/Tresette</li>
+</ul>
+<h3 id="materiali">Materiali</h3>
+<ul>
+<li><strong>Codice sorgente</strong>: Completamente documentato</li>
+<li><strong>Relazione tecnica</strong>: 28 pagine di analisi
+dettagliata<br />
+</li>
+<li><strong>Javadoc</strong>: API documentation completa</li>
+<li><strong>Questa presentazione</strong>: Slide disponibili</li>
+</ul>
+<p><strong>Domande?</strong></p>

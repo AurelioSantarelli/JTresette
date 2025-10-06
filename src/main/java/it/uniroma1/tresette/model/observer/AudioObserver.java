@@ -11,18 +11,28 @@ public class AudioObserver implements GameStateObserver {
     
     private boolean audioAbilitato = true;
     
+    /** Costruttore di default con audio abilitato */
     public AudioObserver() {
         // Costruttore di default
     }
     
+    /** 
+     * Costruttore con configurazione audio personalizzata
+     * @param audioAbilitato true per abilitare l'audio, false per disabilitarlo
+     */
     public AudioObserver(boolean audioAbilitato) {
         this.audioAbilitato = audioAbilitato;
     }
     
+    /** 
+     * Imposta lo stato dell'audio
+     * @param abilitato true per abilitare, false per disabilitare
+     */
     public void setAudioAbilitato(boolean abilitato) {
         this.audioAbilitato = abilitato;
     }
     
+    /** @return true se l'audio è abilitato */
     public boolean isAudioAbilitato() {
         return audioAbilitato;
     }
@@ -40,10 +50,10 @@ public class AudioObserver implements GameStateObserver {
                 // Il suono di vittoria/sconfitta viene gestito altrove
                 break;
             case IN_PAUSA:
-                // Potresti aggiungere un suono specifico per la pausa
+                // Aggiungere un suono per la pausa
                 break;
             case IN_CORSO:
-                // Potresti aggiungere un suono per la ripresa del gioco
+                // Aggiungere un suono per la ripresa del gioco
                 break;
             default:
                 // Nessun suono specifico per altri stati
@@ -54,7 +64,6 @@ public class AudioObserver implements GameStateObserver {
     @Override
     public void onCartaGiocata(Carta carta, String giocatore) {
         if (!audioAbilitato) return;
-        
         // Riproduci suono della carta giocata
         SoundManager.riproduciSuonoCarta();
     }
@@ -62,19 +71,16 @@ public class AudioObserver implements GameStateObserver {
     @Override
     public void onPunteggiAggiornati(double punteggioCoppia1, double punteggioCoppia2) {
         // Nessun suono specifico per l'aggiornamento punteggi
-        // Ma potresti aggiungerne uno se desiderato
     }
     
     @Override
     public void onTurnoCambiato(String nomeGiocatore, int indiceTurno) {
         // Nessun suono specifico per il cambio turno
-        // Ma potresti aggiungere un suono soft per il turno dell'utente
     }
     
     @Override
     public void onFineMano(String vincitore, double puntiMano) {
         if (!audioAbilitato) return;
-        
         // Riproduci suono di fine mano
         SoundManager.riproduciSuonoFineMano();
     }
@@ -82,8 +88,6 @@ public class AudioObserver implements GameStateObserver {
     @Override
     public void onPausaToggled(boolean inPausa) {
         if (!audioAbilitato) return;
-        
-        // Riproduci suono di click per pausa
         // Riproduci suono del click
         SoundManager.riproduciSuonoClick();
     }
@@ -91,7 +95,6 @@ public class AudioObserver implements GameStateObserver {
     @Override
     public void onFineManoCompleta(int numeroMano, double punteggioCoppia1, double punteggioCoppia2) {
         if (!audioAbilitato) return;
-        
         // Riproduci suono di fine mano completa
         SoundManager.riproduciSuonoContinuaPartita();
     }
